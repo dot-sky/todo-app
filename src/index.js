@@ -10,7 +10,7 @@ function ConsoleController() {
     user = name;
     projects.push(new Project("Personal"));
   };
-
+  //   Tasks
   const createTodo = (
     name,
     desc,
@@ -32,23 +32,28 @@ function ConsoleController() {
     tasks.push(task);
   };
 
-  const createProject = (name) => {
-    const project = new Project(name);
-    projects.push(project);
-  };
-
   const showTasks = () => {
     console.log("Showing tasks:");
     for (const task of tasks) {
       task.log();
     }
   };
+
+  const getTask = (index) => tasks[index];
+
+  // Projects
+  const createProject = (name) => {
+    const project = new Project(name);
+    projects.push(project);
+  };
+
   const showProjects = () => {
     console.log("Showing projects:");
     for (const project of projects) {
       project.log();
     }
   };
+
   const showProjectsDetail = () => {
     console.log("Showing projects w/ details:");
     for (const project of projects) {
@@ -56,6 +61,7 @@ function ConsoleController() {
       showTasksOfProject(project.getId());
     }
   };
+
   const showTasksOfProject = (projectId) => {
     for (const task of tasks) {
       if (task.getProjectId() === projectId) {
@@ -63,11 +69,13 @@ function ConsoleController() {
       }
     }
   };
+
   return {
     initController,
     createTodo,
-    createProject,
     showTasks,
+    getTask,
+    createProject,
     showProjectsDetail,
   };
 }
@@ -79,5 +87,7 @@ app.createTodo("read2");
 app.createTodo("read3");
 app.createProject("Pr2");
 app.createTodo("go out", "", "", 0, 0, 1, []);
-app.showTasks();
+
+app.getTask(1).assignToProject(1);
+app.getTask(2).assignToProject(1);
 app.showProjectsDetail();

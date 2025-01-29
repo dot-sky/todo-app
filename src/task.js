@@ -22,6 +22,10 @@ export class Task {
     return Task.#id++;
   }
 
+  assignToProject(projectId) {
+    this.#projectId = projectId;
+  }
+
   getProjectId() {
     return this.#projectId;
   }
