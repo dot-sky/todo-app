@@ -6,6 +6,7 @@ function TodoApp() {
   let tasks = [];
   let projects = [];
   let DEFAULT_PROJECT_ID;
+
   const initApp = (name) => {
     user = name;
     // add default project
@@ -13,6 +14,7 @@ function TodoApp() {
     projects.push(defaultProject);
     DEFAULT_PROJECT_ID = defaultProject.getId();
   };
+
   //   Tasks
   const createTodo = (
     name,
@@ -36,15 +38,15 @@ function TodoApp() {
   };
 
   const showTasks = () => {
-    console.log("Showing tasks:");
+    console.log("Tasks:");
     for (const task of tasks) {
       task.logSummary();
     }
   };
 
-  const getTask = (index) => tasks[index];
+  const getTaskByIndex = (index) => tasks[index];
 
-  const getTaskById = (id) => {
+  const getTask = (id) => {
     const task = tasks.filter((task) => task.getId() === id)[0];
     if (!task) {
       console.log("Task id not found");
@@ -68,15 +70,16 @@ function TodoApp() {
       console.log(" ! Task id not found!");
     }
   };
+
   // Projects
   const createProject = (name) => {
     const project = new Project(name);
     projects.push(project);
   };
 
-  const getProject = (index) => projects[index];
+  const getProjectByIndex = (index) => projects[index];
 
-  const getProjectById = (id) => {
+  const getProject = (id) => {
     const project = projects.filter((project) => project.getId() === id)[0];
     if (!project) {
       console.log("no project id found");
@@ -107,6 +110,7 @@ function TodoApp() {
       });
     }
   };
+
   const deleteProjectWithTasks = (projectId) => {
     if (removeProject(projectId)) {
       const filteredTasks = tasks.filter(
@@ -144,13 +148,14 @@ function TodoApp() {
     initApp,
     createTodo,
     showTasks,
+    getTaskByIndex,
     getTask,
-    getTaskById,
     deleteTask,
     getProject,
     deleteProject,
     deleteProjectWithTasks,
     createProject,
+    showProjects,
     showProjectsDetail,
     addTaskToProject,
   };
@@ -167,17 +172,17 @@ app.createTodo("read6");
 app.createTodo("read7");
 app.createProject("Pr2");
 app.createProject("Project3");
-app.getTaskById(4).assignToProject(2);
-app.getTaskById(5).assignToProject(2);
-app.getTaskById(6).assignToProject(2);
+app.getTask(4).assignToProject(2);
+app.getTask(5).assignToProject(2);
+app.getTask(6).assignToProject(2);
 app.createTodo("go out", "", "", 0, 0, 1, []);
 
-app.getTask(1).assignToProject(1);
-app.getTask(2).assignToProject(1);
+app.getTaskByIndex(1).assignToProject(1);
+app.getTaskByIndex(2).assignToProject(1);
 app.showProjectsDetail();
 
-app.addTaskToProject(app.getTask(3), app.getProject(0));
-app.addTaskToProject(app.getTaskById(8), app.getProject(0));
+app.addTaskToProject(app.getTaskByIndex(3), app.getProject(0));
+app.addTaskToProject(app.getTask(8), app.getProject(0));
 
 app.showProjectsDetail();
 app.deleteProjectWithTasks(2);
