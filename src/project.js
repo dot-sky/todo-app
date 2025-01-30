@@ -11,11 +11,17 @@ export class Project {
     return Project.#id++;
   }
 
+  // getters
   getId() {
     return this.#projectId;
   }
 
+  // console
   log() {
     console.log(this);
+  }
+
+  logFormatted() {
+    console.log(`PId:${this.#projectId} ${this.name}: ${this.desc}`);
   }
 }
