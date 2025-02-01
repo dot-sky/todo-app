@@ -1,4 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+@import "~@flaticon/flaticon-uicons/css/all/all";
+/* root variables: color palette, spaces */
 :root {
   --text: #000203;
   --background: #ffffff;
@@ -68,10 +70,27 @@
   --accent-800: #004266;
   --accent-900: #002133;
   --accent-950: #00111a;
+  /* Spacing */
+  --space-1x: 8px;
+  --space-2x: 16px;
+  --space-3x: 24px;
+  --space-4x: 32px;
+  --space-5x: 40px;
 }
+/* css reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+* {
+  margin: 0;
+}
+/* Font style */
 body {
   font-family: "Inter";
   font-weight: 400;
+  color: var(--text);
 }
 
 h1,
@@ -109,4 +128,51 @@ h5 {
 
 small {
   font-size: 0.75rem; /* 12px */
+}
+
+/* General */
+.menu-icon {
+  display: flex;
+  align-items: center;
+}
+
+/* Main container */
+.main-grid {
+  display: grid;
+  height: 100vh;
+  grid-template-columns: 2fr 4fr 4fr;
+}
+.col {
+  border-right: 1px solid var(--background-400);
+  padding: var(--space-4x);
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+/* Menu */
+.menu-segment-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: var(--space-1x) 0;
+}
+
+.menu-segment-heading > a > .menu-icon {
+  font-size: 20px;
+  padding: var(--space-1x);
+  color: var(--primary-500);
+}
+
+.menu-elements {
+  list-style: none;
+  padding: 0;
+}
+.menu-elements > li > a {
+  display: block;
+  padding: calc(var(--space-1x) * 1.5) var(--space-2x);
+  border-radius: var(--space-1x);
+}
+.menu-elements > li > a:hover {
+  background-color: var(--primary-50);
 }
