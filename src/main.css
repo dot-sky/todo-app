@@ -1,0 +1,112 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+:root {
+  --text: #000203;
+  --background: #ffffff;
+  --primary: #5ab2ff;
+  --secondary: #fff9d0;
+  --accent: #a0deff;
+  --danger: #df6873;
+  --warning: #f0e56a;
+  --success: #6cc66f;
+
+  --text-50: #e5f6ff;
+  --text-100: #cceeff;
+  --text-200: #99ddff;
+  --text-300: #66ccff;
+  --text-400: #33bbff;
+  --text-500: #00aaff;
+  --text-600: #0088cc;
+  --text-700: #006699;
+  --text-800: #004466;
+  --text-900: #002233;
+  --text-950: #00111a;
+
+  --background-50: #f2f2f2;
+  --background-100: #e6e6e6;
+  --background-200: #cccccc;
+  --background-300: #b3b3b3;
+  --background-400: #999999;
+  --background-500: #808080;
+  --background-600: #666666;
+  --background-700: #4d4d4d;
+  --background-800: #333333;
+  --background-900: #1a1a1a;
+  --background-950: #0d0d0d;
+
+  --primary-50: #e5f3ff;
+  --primary-100: #cce7ff;
+  --primary-200: #99cfff;
+  --primary-300: #66b8ff;
+  --primary-400: #33a0ff;
+  --primary-500: #0088ff;
+  --primary-600: #006dcc;
+  --primary-700: #005299;
+  --primary-800: #003666;
+  --primary-900: #001b33;
+  --primary-950: #000e1a;
+
+  --secondary-50: #fffce5;
+  --secondary-100: #fff8cc;
+  --secondary-200: #fff199;
+  --secondary-300: #ffeb66;
+  --secondary-400: #ffe433;
+  --secondary-500: #ffdd00;
+  --secondary-600: #ccb100;
+  --secondary-700: #998500;
+  --secondary-800: #665800;
+  --secondary-900: #332c00;
+  --secondary-950: #1a1600;
+
+  --accent-50: #e5f6ff;
+  --accent-100: #ccedff;
+  --accent-200: #99dbff;
+  --accent-300: #66c9ff;
+  --accent-400: #33b8ff;
+  --accent-500: #00a6ff;
+  --accent-600: #0085cc;
+  --accent-700: #006399;
+  --accent-800: #004266;
+  --accent-900: #002133;
+  --accent-950: #00111a;
+}
+body {
+  font-family: "Inter";
+  font-weight: 400;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: "Inter";
+  font-weight: 700;
+}
+
+html {
+  font-size: 100%;
+} /* 16px */
+
+h1 {
+  font-size: 4.21rem; /* 67.36px */
+}
+
+h2 {
+  font-size: 3.158rem; /* 50.56px */
+}
+
+h3 {
+  font-size: 2.369rem; /* 37.92px */
+}
+
+h4 {
+  font-size: 1.777rem; /* 28.48px */
+}
+
+h5 {
+  font-size: 1.333rem; /* 21.28px */
+}
+
+small {
+  font-size: 0.75rem; /* 12px */
+}
