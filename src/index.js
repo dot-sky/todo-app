@@ -6,7 +6,7 @@ class ScreenController {
   constructor(doc) {
     this.doc = doc;
     this.todoApp = new TodoApp();
-    this.todoApp.addData();
+    this.todoApp.loadData();
   }
 
   updateWindow() {

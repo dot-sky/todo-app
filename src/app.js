@@ -1,10 +1,12 @@
 import { Task } from "./task.js";
 import { Project } from "./project.js";
-function TodoApp() {
+export function TodoApp() {
   let user;
   let tasks = [];
   let projects = [];
   let DEFAULT_PROJECT_ID;
+  const taskMenu = { title: "Tasks", items: ["All", "Today", "Next 7 days"] };
+  const projectMenu = { title: "Projects" };
 
   const initApp = (name) => {
     user = name;
@@ -13,6 +15,9 @@ function TodoApp() {
     projects.push(defaultProject);
     DEFAULT_PROJECT_ID = defaultProject.getId();
   };
+
+  const getTaskMenu = () => taskMenu;
+  const getProjectMenu = () => projectMenu;
 
   //   Tasks
   const createTodo = (
@@ -71,6 +76,7 @@ function TodoApp() {
   };
 
   // Projects
+  const getAllProjects = () => projects;
   const createProject = (name) => {
     const project = new Project(name);
     projects.push(project);
@@ -143,14 +149,45 @@ function TodoApp() {
     }
   };
 
+  const loadData = () => {
+    initApp("user");
+    createTodo("read1");
+    createTodo("read2");
+    createTodo("read3");
+    createTodo("read4");
+    createTodo("read5");
+    createTodo("read6");
+    createTodo("read7");
+    createProject("Pr2");
+    createProject("Project3");
+    getTask(4).assignToProject(2);
+    getTask(5).assignToProject(2);
+    getTask(6).assignToProject(2);
+    createTodo("go out", "", "", 0, 0, 1, []);
+
+    getTaskByIndex(1).assignToProject(1);
+    getTaskByIndex(2).assignToProject(1);
+    showProjectsDetail();
+
+    addTaskToProject(getTaskByIndex(3), getProject(0));
+    addTaskToProject(getTask(8), getProject(0));
+
+    showProjectsDetail();
+    // deleteProjectWithTasks(2);
+    showProjectsDetail();
+  };
   return {
+    loadData,
     initApp,
     createTodo,
     showTasks,
     getTaskByIndex,
     getTask,
+    getTaskMenu,
+    getProjectMenu,
     deleteTask,
     getProject,
+    getAllProjects,
     deleteProject,
     deleteProjectWithTasks,
     createProject,
@@ -161,28 +198,3 @@ function TodoApp() {
 }
 
 const app = TodoApp();
-app.initApp("user");
-app.createTodo("read1");
-app.createTodo("read2");
-app.createTodo("read3");
-app.createTodo("read4");
-app.createTodo("read5");
-app.createTodo("read6");
-app.createTodo("read7");
-app.createProject("Pr2");
-app.createProject("Project3");
-app.getTask(4).assignToProject(2);
-app.getTask(5).assignToProject(2);
-app.getTask(6).assignToProject(2);
-app.createTodo("go out", "", "", 0, 0, 1, []);
-
-app.getTaskByIndex(1).assignToProject(1);
-app.getTaskByIndex(2).assignToProject(1);
-app.showProjectsDetail();
-
-app.addTaskToProject(app.getTaskByIndex(3), app.getProject(0));
-app.addTaskToProject(app.getTask(8), app.getProject(0));
-
-app.showProjectsDetail();
-app.deleteProjectWithTasks(2);
-app.showProjectsDetail();
