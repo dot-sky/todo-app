@@ -1,189 +1,96 @@
-import "./style.css";
-import { Task } from "./task.js";
-import { Project } from "./project.js";
-function TodoApp() {
-  let user;
-  let tasks = [];
-  let projects = [];
-  let DEFAULT_PROJECT_ID;
+import "./main.css";
+import { TodoApp } from "./app.js";
+import { add } from "date-fns";
 
-  const initApp = (name) => {
-    user = name;
-    // add default project
-    const defaultProject = new Project("Personal");
-    projects.push(defaultProject);
-    DEFAULT_PROJECT_ID = defaultProject.getId();
-  };
+class ScreenController {
+  constructor(doc) {
+    this.doc = doc;
+    this.todoApp = new TodoApp();
+    this.todoApp.addData();
+  }
 
-  //   Tasks
-  const createTodo = (
-    name,
-    desc,
-    dueDate,
-    priority,
-    status,
-    projectId,
-    checklist
-  ) => {
-    const task = new Task(
-      name,
-      desc,
-      dueDate,
-      priority,
-      status,
-      projectId,
-      checklist
-    );
-    tasks.push(task);
-  };
+  updateWindow() {
+    this.populateSideBarSection();
+  }
 
-  const showTasks = () => {
-    console.log("Tasks:");
-    for (const task of tasks) {
-      task.logSummary();
+  populateSideBarSection() {
+    this.asideSection = this.doc.querySelector(".side-bar-section");
+    const appSection = this.doc.createElement("div");
+
+    const userSection = this.doc.createElement("div");
+    userSection.textContent = "Derek";
+
+    // Tasks
+    const tasksMenu = this.doc.createElement("div");
+    const taskHeading = this.doc.createElement("div");
+    const taskTitle = this.doc.createElement("h4");
+    taskTitle.textContent = this.todoApp.getTaskMenu().title;
+    const addTaskIcon = this.doc.createElement("i");
+    const addTaskLink = this.doc.createElement("a");
+
+    const taskMenuList = this.doc.createElement("ul");
+    for (const item of this.todoApp.getTaskMenu().items) {
+      const listItem = this.doc.createElement("li");
+      const itemLink = this.doc.createElement("a");
+      itemLink.textContent = item;
+
+      listItem.appendChild(itemLink);
+      taskMenuList.appendChild(listItem);
     }
-  };
 
-  const getTaskByIndex = (index) => tasks[index];
+    this.elementAddClass(addTaskIcon, "fi-rr-add menu-icon");
+    taskHeading.classList.add("menu-segment-heading");
+    taskMenuList.classList.add("menu-elements");
 
-  const getTask = (id) => {
-    const task = tasks.filter((task) => task.getId() === id)[0];
-    if (!task) {
-      console.log("Task id not found");
+    addTaskLink.appendChild(addTaskIcon);
+    taskHeading.appendChild(taskTitle);
+    taskHeading.appendChild(addTaskLink);
+
+    tasksMenu.appendChild(taskHeading);
+    tasksMenu.appendChild(taskMenuList);
+
+    // Projects
+    const projectsMenu = this.doc.createElement("div");
+    const projectHeading = this.doc.createElement("div");
+    const projectTitle = this.doc.createElement("h4");
+    projectTitle.textContent = this.todoApp.getProjectMenu().title;
+    const addProjectIcon = this.doc.createElement("i");
+    const addProjectLink = this.doc.createElement("a");
+
+    const projectMenuList = this.doc.createElement("ul");
+    for (const project of this.todoApp.getAllProjects()) {
+      const listItem = this.doc.createElement("li");
+      const itemLink = this.doc.createElement("a");
+      itemLink.textContent = project.getName();
+
+      listItem.appendChild(itemLink);
+      projectMenuList.appendChild(listItem);
     }
-    return task;
-  };
 
-  const addTaskToProject = (task, project) => {
-    if (task && project) {
-      task.assignToProject(project.getId());
-    } else {
-      console.log("Task or project is null");
+    this.elementAddClass(addProjectIcon, "fi-rr-add menu-icon");
+    projectHeading.classList.add("menu-segment-heading");
+    projectMenuList.classList.add("menu-elements");
+
+    addProjectLink.appendChild(addProjectIcon);
+    projectHeading.appendChild(projectTitle);
+    projectHeading.appendChild(addProjectLink);
+
+    projectsMenu.appendChild(projectHeading);
+    projectsMenu.appendChild(projectMenuList);
+
+    this.asideSection.textContent = "";
+    this.asideSection.appendChild(appSection);
+    this.asideSection.appendChild(userSection);
+    this.asideSection.appendChild(tasksMenu);
+    this.asideSection.appendChild(projectsMenu);
+  }
+
+  elementAddClass(elem, classes) {
+    const classNames = classes.split(" ");
+    for (const className of classNames) {
+      if (className) elem.classList.add(className);
     }
-  };
-
-  const deleteTask = (taskId) => {
-    const index = tasks.findIndex((task) => task.getId() === taskId);
-    if (index >= 0) {
-      tasks.splice(index, 1);
-    } else {
-      console.log(" ! Task id not found!");
-    }
-  };
-
-  // Projects
-  const createProject = (name) => {
-    const project = new Project(name);
-    projects.push(project);
-  };
-
-  const getProjectByIndex = (index) => projects[index];
-
-  const getProject = (id) => {
-    const project = projects.filter((project) => project.getId() === id)[0];
-    if (!project) {
-      console.log("no project id found");
-    }
-    return project || {};
-  };
-
-  const removeProject = (projectId) => {
-    const index = projects.findIndex(
-      (project) => project.getId() === projectId
-    );
-    if (index >= 0) {
-      projects.splice(index, 1);
-      return true;
-    } else {
-      console.log(" ! Project id not found!");
-      return false;
-    }
-  };
-
-  const deleteProject = (projectId) => {
-    // reassigning tasks to default project
-    if (removeProject(projectId)) {
-      tasks.forEach((task) => {
-        if (task.getProjectId() === projectId) {
-          task.assignToProject(DEFAULT_PROJECT_ID);
-        }
-      });
-    }
-  };
-
-  const deleteProjectWithTasks = (projectId) => {
-    if (removeProject(projectId)) {
-      const filteredTasks = tasks.filter(
-        (task) => task.getProjectId() !== projectId
-      );
-      tasks = filteredTasks;
-    }
-  };
-
-  const showProjects = () => {
-    console.log("Showing projects:");
-    for (const project of projects) {
-      project.log();
-    }
-  };
-
-  const showProjectsDetail = () => {
-    console.log("----------------------------");
-    console.log("Showing projects w/ details:");
-    for (const project of projects) {
-      project.logFormatted();
-      showProjectTasks(project.getId());
-    }
-  };
-
-  const showProjectTasks = (projectId) => {
-    for (const task of tasks) {
-      if (task.getProjectId() === projectId) {
-        task.logSummary();
-      }
-    }
-  };
-
-  return {
-    initApp,
-    createTodo,
-    showTasks,
-    getTaskByIndex,
-    getTask,
-    deleteTask,
-    getProject,
-    deleteProject,
-    deleteProjectWithTasks,
-    createProject,
-    showProjects,
-    showProjectsDetail,
-    addTaskToProject,
-  };
+  }
 }
-
-const app = TodoApp();
-app.initApp("user");
-app.createTodo("read1");
-app.createTodo("read2");
-app.createTodo("read3");
-app.createTodo("read4");
-app.createTodo("read5");
-app.createTodo("read6");
-app.createTodo("read7");
-app.createProject("Pr2");
-app.createProject("Project3");
-app.getTask(4).assignToProject(2);
-app.getTask(5).assignToProject(2);
-app.getTask(6).assignToProject(2);
-app.createTodo("go out", "", "", 0, 0, 1, []);
-
-app.getTaskByIndex(1).assignToProject(1);
-app.getTaskByIndex(2).assignToProject(1);
-app.showProjectsDetail();
-
-app.addTaskToProject(app.getTaskByIndex(3), app.getProject(0));
-app.addTaskToProject(app.getTask(8), app.getProject(0));
-
-app.showProjectsDetail();
-app.deleteProjectWithTasks(2);
-app.showProjectsDetail();
+const screenCont = new ScreenController(document);
+screenCont.updateWindow();
