@@ -3,7 +3,11 @@
 /* root variables: color palette, spaces */
 :root {
   --text: #000203;
+  --text: #0f0f10;
+
   --background: #ffffff;
+  --background: #f9fcff;
+
   --primary: #5ab2ff;
   --secondary: #fff9d0;
   --accent: #a0deff;
@@ -11,7 +15,19 @@
   --warning: #f0e56a;
   --success: #6cc66f;
 
-  --text-50: #e5f6ff;
+  --text-50: #f2f2f3;
+  --text-100: #e5e5e6;
+  --text-200: #cacace;
+  --text-300: #b0b0b5;
+  --text-400: #96969c;
+  --text-500: #7c7c83;
+  --text-600: #636369;
+  --text-700: #4a4a4f;
+  --text-800: #313135;
+  --text-900: #19191a;
+  --text-950: #0c0c0d;
+
+  /* --text-50: #e5f6ff;
   --text-100: #cceeff;
   --text-200: #99ddff;
   --text-300: #66ccff;
@@ -21,9 +37,9 @@
   --text-700: #006699;
   --text-800: #004466;
   --text-900: #002233;
-  --text-950: #00111a;
+  --text-950: #00111a; */
 
-  --background-50: #f2f2f2;
+  /* --background-50: #f2f2f2;
   --background-100: #e6e6e6;
   --background-200: #cccccc;
   --background-300: #b3b3b3;
@@ -33,7 +49,19 @@
   --background-700: #4d4d4d;
   --background-800: #333333;
   --background-900: #1a1a1a;
-  --background-950: #0d0d0d;
+  --background-950: #0d0d0d; */
+
+  --background-50: #e5f2ff;
+  --background-100: #cce5ff;
+  --background-200: #99ccff;
+  --background-300: #66b2ff;
+  --background-400: #3399ff;
+  --background-500: #007fff;
+  --background-600: #0066cc;
+  --background-700: #004c99;
+  --background-800: #003366;
+  --background-900: #001933;
+  --background-950: #000d1a;
 
   --primary-50: #e5f3ff;
   --primary-100: #cce7ff;
@@ -76,6 +104,11 @@
   --space-3x: 24px;
   --space-4x: 32px;
   --space-5x: 40px;
+  /* Sizing */
+  --icon-size-sm: 16px;
+  --icon-size-md: 20px;
+  --icon-size-lg: 24px;
+  --icon-size-xl: 32px;
 }
 /* css reset */
 *,
@@ -134,8 +167,18 @@ small {
 .menu-icon {
   display: flex;
   align-items: center;
+  padding: var(--space-1x);
+  border-radius: var(--space-1x);
+  font-size: var(--icon-size-md);
 }
 
+.icon {
+  display: flex;
+  align-items: center;
+  padding: var(--space-1x);
+  border-radius: var(--space-1x);
+  font-size: var(--icon-size-md);
+}
 /* Main container */
 .main-grid {
   display: grid;
@@ -143,14 +186,15 @@ small {
   grid-template-columns: 2fr 4fr 4fr;
 }
 .col {
-  border-right: 1px solid var(--background-400);
+  border-right: 1px solid var(--text-300);
   padding: var(--space-4x);
 }
 a {
   text-decoration: none;
   color: inherit;
 }
-/* Menu */
+
+/* Side Bar */
 .menu-segment-heading {
   display: flex;
   align-items: center;
@@ -159,8 +203,6 @@ a {
 }
 
 .menu-segment-heading > a > .menu-icon {
-  font-size: 20px;
-  padding: var(--space-1x);
   color: var(--primary-500);
 }
 
@@ -168,11 +210,75 @@ a {
   list-style: none;
   padding: 0;
 }
+
 .menu-elements > li > a {
   display: block;
   padding: calc(var(--space-1x) * 1.5) var(--space-2x);
   border-radius: var(--space-1x);
 }
+
 .menu-elements > li > a:hover {
   background-color: var(--primary-50);
+}
+
+/* Main */
+.main-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-2x);
+}
+
+.main-title .icon {
+  font-size: var(--icon-size-lg);
+  color: var(--text-400);
+}
+
+.main-title .icon:hover {
+  background-color: var(--text-50);
+}
+
+.main-desc {
+  color: var(--text-500);
+  margin-bottom: var(--space-3x);
+}
+
+/* Main -> item */
+.main-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-2x);
+  border-radius: var(--space-1x);
+}
+
+.main-item:hover {
+  background-color: var(--primary-50);
+}
+
+.main-item-desc {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.main-item-desc .check-box-link {
+  margin: var(--space-1x);
+  margin-right: var(--space-2x);
+}
+.main-item .check-box {
+  padding: 0px;
+  color: var(--text-500);
+}
+.main-item .check-box:hover {
+  color: var(--text-800);
+  background-color: var(--text-50);
+}
+
+.main-item-date {
+  color: var(--primary-600);
+}
+.main-item-desc .priority-icon {
+  font-size: var(--icon-size-sm);
+  margin: 0px var(--space-1x);
+  color: var(--success);
 }
