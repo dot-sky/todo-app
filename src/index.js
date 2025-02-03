@@ -22,20 +22,22 @@ class ScreenController {
   }
 
   populateMainSection(list) {
-    console.log(list);
+    // remove previous content
+    this.mainSection.textContent = "";
+
     const header = this.doc.createElement("div");
     const mainList = this.doc.createElement("div");
 
     // Header
     const headerTitle = this.doc.createElement("div");
-    const title = this.createElement("h4", list.getName());
+    const title = this.createElement("h4", list.name);
     const editLink = this.doc.createElement("a");
     const editIcon = this.createElement("i", "", "fi fi-rr-edit icon");
     const headerDesc = this.doc.createElement("div");
     const descText = this.doc.createElement("p");
 
     editLink.setAttribute("href", "#");
-    descText.textContent = list.getDesc();
+    descText.textContent = list.desc;
 
     this.elementAddClass(header, "main-header");
     this.elementAddClass(headerTitle, "main-title");
@@ -141,10 +143,11 @@ class ScreenController {
     const projectMenuList = this.doc.createElement("ul");
     for (const project of this.todoApp.getAllProjects()) {
       const listItem = this.doc.createElement("li");
-      const itemLink = this.doc.createElement("a");
-      itemLink.textContent = project.getName();
+      listItem.textContent = project.name;
+      listItem.addEventListener("click", () =>
+        this.populateMainSection(project)
+      );
 
-      listItem.appendChild(itemLink);
       projectMenuList.appendChild(listItem);
     }
 
