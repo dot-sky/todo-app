@@ -23,6 +23,14 @@ export class Task {
     this.#projectId = projectId;
   }
 
+  markComplete() {
+    this.status = 1;
+  }
+  
+  changePriority(priority) {
+    this.priority = priority;
+  }
+
   // settters
   setDueDate(date) {
     return format(date || Date(Date.now()), "yyyy-MM-dd");
