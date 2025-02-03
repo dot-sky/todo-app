@@ -211,13 +211,12 @@ a {
   padding: 0;
 }
 
-.menu-elements > li > a {
-  display: block;
+.menu-elements > li {
   padding: calc(var(--space-1x) * 1.5) var(--space-2x);
   border-radius: var(--space-1x);
 }
 
-.menu-elements > li > a:hover {
+.menu-elements > li:hover {
   background-color: var(--primary-50);
 }
 
