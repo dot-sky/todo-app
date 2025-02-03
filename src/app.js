@@ -11,7 +11,10 @@ export function TodoApp() {
   const initApp = (name) => {
     user = name;
     // add default project
-    const defaultProject = new Project("Personal");
+    const defaultProject = new Project(
+      "Personal",
+      "Add your personal projects here."
+    );
     projects.push(defaultProject);
     DEFAULT_PROJECT_ID = defaultProject.getId();
   };
@@ -49,6 +52,9 @@ export function TodoApp() {
   };
 
   const getTaskByIndex = (index) => tasks[index];
+
+  const getProjectTasks = (projectId) =>
+    tasks.filter((task) => task.getProjectId() === projectId);
 
   const getTask = (id) => {
     const task = tasks.filter((task) => task.getId() === id)[0];
@@ -185,6 +191,7 @@ export function TodoApp() {
     getTask,
     getTaskMenu,
     getProjectMenu,
+    getProjectTasks,
     deleteTask,
     getProject,
     getAllProjects,
