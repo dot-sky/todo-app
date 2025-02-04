@@ -1,5 +1,5 @@
 import "./main.css";
-import { TodoApp } from "./app.js";
+import { TodoApp, Task } from "./app.js";
 import { add } from "date-fns";
 
 class ScreenController {
@@ -14,13 +14,80 @@ class ScreenController {
   cacheDOM() {
     this.asideSection = this.doc.querySelector(".side-bar-section");
     this.mainSection = this.doc.querySelector(".main-section");
+    this.taskSection = this.doc.querySelector(".task-section");
   }
 
   updateWindow() {
     this.populateSideBarSection();
     this.populateMainSection(this.todoApp.getProject(2));
+    this.populateTaskSection(this.todoApp.getTask(2));
   }
 
+  displayTaskDetails(task) {
+    this.taskSection.textContent = "";
+
+    const header = this.doc.createElement("div");
+    const content = this.doc.createElement("div");
+    const controls = this.doc.createElement("div");
+    const checkDate = this.doc.createElement("div");
+    const dateWrapper = this.doc.createElement("div");
+    const date = this.doc.createElement("p");
+    const titleWrapper = this.doc.createElement("task-title");
+    const title = this.doc.createElement("h4");
+    const desc = this.doc.createElement("p");
+    const checkBox = this.createElement(
+      "i",
+      "",
+      "fi fi-rr-square clickable-icon check-box"
+    );
+    const editIcon = this.createElement(
+      "i",
+      "",
+      "fi fi-rr-edit clickable-icon edit-icon"
+    );
+    const priorityIcon = this.createElement(
+      "i",
+      "",
+      "fi fi-rr-flag-alt icon priority-icon"
+    );
+    date.textContent = task.dueDate;
+    title.textContent = task.title;
+    desc.textContent = task.desc;
+
+    this.elementAddClass(header, "task-header");
+    this.elementAddClass(controls, "task-controls");
+    this.elementAddClass(checkDate, "task-check-date");
+    this.elementAddClass(dateWrapper, "task-date");
+    this.elementAddClass(titleWrapper, "task-title");
+    this.elementAddClass(desc, "task-desc");
+
+    dateWrapper.appendChild(date);
+    checkDate.appendChild(checkBox);
+    checkDate.appendChild(dateWrapper);
+    controls.appendChild(checkDate);
+    controls.appendChild(editIcon);
+    titleWrapper.appendChild(title);
+    titleWrapper.appendChild(priorityIcon);
+    header.appendChild(controls);
+    header.appendChild(titleWrapper);
+    content.appendChild(desc);
+
+    this.taskSection.appendChild(header);
+    this.taskSection.appendChild(content);
+  }
+  populateTaskSection(task) {
+    if (task && task instanceof Task) {
+      this.displayTaskDetails(task);
+    } else {
+      this.displayMessage(this.taskSection, "Select a task ... ");
+    }
+  }
+  displayMessage(section, message) {
+    section.textContent = "";
+    const msg = this.doc.createElement("p");
+    msg.textContent = message;
+    section.appendChild(msg);
+  }
   populateMainSection(list) {
     // remove previous content
     this.mainSection.textContent = "";
