@@ -161,6 +161,10 @@ class ScreenController {
 
       itemContainer.appendChild(desc);
       itemContainer.appendChild(dateContainer);
+
+      itemContainer.addEventListener("click", () =>
+        this.populateTaskSection(task)
+      );
       mainList.appendChild(itemContainer);
     }
 
