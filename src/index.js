@@ -32,7 +32,11 @@ class ScreenController {
     const headerTitle = this.doc.createElement("div");
     const title = this.createElement("h4", list.name);
     const editLink = this.doc.createElement("a");
-    const editIcon = this.createElement("i", "", "fi fi-rr-edit icon");
+    const editIcon = this.createElement(
+      "i",
+      "",
+      "fi fi-rr-edit clickable-icon edit-icon"
+    );
     const headerDesc = this.doc.createElement("div");
     const descText = this.doc.createElement("p");
 
@@ -56,12 +60,12 @@ class ScreenController {
       const itemContainer = this.doc.createElement("div");
       const desc = this.doc.createElement("div");
       const dateContainer = this.doc.createElement("div");
-      const date = this.doc.createElement("div");
+      const date = this.doc.createElement("p");
       const checkBoxLink = this.doc.createElement("a");
       const checkBoxIcon = this.createElement(
         "i",
         "",
-        "fi fi-rr-square menu-icon check-box"
+        "fi fi-rr-square clickable-icon check-box"
       );
       const taskTitle = this.doc.createElement("a");
       const taskPriority = this.doc.createElement("a");
@@ -120,7 +124,7 @@ class ScreenController {
       taskMenuList.appendChild(listItem);
     }
 
-    this.elementAddClass(addTaskIcon, "fi-rr-add menu-icon");
+    this.elementAddClass(addTaskIcon, "fi-rr-add icon");
     taskHeading.classList.add("menu-segment-heading");
     taskMenuList.classList.add("menu-elements");
 
@@ -151,7 +155,7 @@ class ScreenController {
       projectMenuList.appendChild(listItem);
     }
 
-    this.elementAddClass(addProjectIcon, "fi-rr-add menu-icon");
+    this.elementAddClass(addProjectIcon, "fi-rr-add icon");
     projectHeading.classList.add("menu-segment-heading");
     projectMenuList.classList.add("menu-elements");
 
