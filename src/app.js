@@ -1,5 +1,6 @@
 import { Task } from "./task.js";
 import { Project } from "./project.js";
+export { Task };
 export function TodoApp() {
   let user;
   let tasks = [];
@@ -83,8 +84,8 @@ export function TodoApp() {
 
   // Projects
   const getAllProjects = () => projects;
-  const createProject = (name) => {
-    const project = new Project(name);
+  const createProject = (name, desc) => {
+    const project = new Project(name, desc);
     projects.push(project);
   };
 
@@ -157,29 +158,96 @@ export function TodoApp() {
 
   const loadData = () => {
     initApp("user");
-    createTodo("read1");
-    createTodo("read2");
-    createTodo("read3");
-    createTodo("read4");
-    createTodo("read5");
-    createTodo("read6");
-    createTodo("read7");
-    createProject("Pr2");
-    createProject("Project3");
-    getTask(4).assignToProject(2);
-    getTask(5).assignToProject(2);
+    createTodo(
+      "Grocery Shopping",
+      "Buy vegetables, fruits, milk, and other household essentials.",
+      "2025-02-05",
+      1,
+      0,
+      0,
+      []
+    );
+    createTodo(
+      "Finish Project Report",
+      "Complete and submit the quarterly project report for review.",
+      "2025-02-06",
+      2,
+      1,
+      0,
+      []
+    );
+    createTodo(
+      "Doctor's Appointment",
+      "Visit the doctor for a routine health check-up.",
+      "2025-02-07",
+      1,
+      0,
+      0,
+      []
+    );
+    createTodo(
+      "Workout Session",
+      "Attend the scheduled gym session for strength training.",
+      "2025-02-08",
+      0,
+      2,
+      0,
+      []
+    );
+    createTodo(
+      "Prepare Presentation",
+      "Create slides for the upcoming team meeting.",
+      "2025-02-09",
+      2,
+      1,
+      0,
+      []
+    );
+    createTodo(
+      "Car Maintenance",
+      "Take the car for an oil change and tire rotation.",
+      "2025-02-10",
+      1,
+      0,
+      0,
+      []
+    );
+    createTodo(
+      "Pay Utility Bills",
+      "Clear electricity, water, and internet bills before the deadline.",
+      "2025-02-11",
+      3,
+      1,
+      0,
+      []
+    );
+    createTodo(
+      "Read a Book",
+      "Finish reading the current novel and start a new one.",
+      "2025-02-12",
+      0,
+      2,
+      0,
+      []
+    );
+    createTodo(
+      "Weekend Trip Planning",
+      "Plan the itinerary and book accommodations for the weekend trip.",
+      "2025-02-13",
+      2,
+      0,
+      0,
+      []
+    );
+    createProject("Work", "All things related to work");
+    createProject("University", "For my classses");
+    createProject("Fun", "Anything related to fun activities!");
+    getTask(3).assignToProject(1);
+    getTask(4).assignToProject(1);
+    getTask(5).assignToProject(1);
     getTask(6).assignToProject(2);
-    createTodo("go out", "", "", 0, 0, 1, []);
-
-    getTaskByIndex(1).assignToProject(1);
-    getTaskByIndex(2).assignToProject(1);
-    showProjectsDetail();
-
-    addTaskToProject(getTaskByIndex(3), getProject(0));
-    addTaskToProject(getTask(8), getProject(0));
-
-    showProjectsDetail();
-    // deleteProjectWithTasks(2);
+    getTask(7).assignToProject(2);
+    getTask(8).assignToProject(3);
     showProjectsDetail();
   };
   return {
