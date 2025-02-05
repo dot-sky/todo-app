@@ -1,5 +1,5 @@
 import "./main.css";
-import { TodoApp, Task } from "./app.js";
+import { TodoApp, Project, Task } from "./app.js";
 import { add } from "date-fns";
 
 class ScreenController {
@@ -75,6 +75,7 @@ class ScreenController {
     this.taskSection.appendChild(header);
     this.taskSection.appendChild(content);
   }
+  
   populateTaskSection(task) {
     if (task && task instanceof Task) {
       this.displayTaskDetails(task);
@@ -82,13 +83,15 @@ class ScreenController {
       this.displayMessage(this.taskSection, "Select a task ... ");
     }
   }
+
   displayMessage(section, message) {
     section.textContent = "";
     const msg = this.doc.createElement("p");
     msg.textContent = message;
     section.appendChild(msg);
   }
-  populateMainSection(list) {
+
+  displayMainSection(list) {
     // remove previous content
     this.mainSection.textContent = "";
 
@@ -171,6 +174,16 @@ class ScreenController {
     this.mainSection.appendChild(header);
     this.mainSection.appendChild(mainList);
   }
+
+  populateMainSection(list) {
+    if (list && list instanceof Project) {
+      this.displayMainSection(list);
+      this.populateTaskSection();
+    } else {
+      this.displayMessage(this.mainSection, "Select a project ... ");
+    }
+  }
+
   populateSideBarSection() {
     const appSection = this.doc.createElement("div");
     const userSection = this.doc.createElement("div");
