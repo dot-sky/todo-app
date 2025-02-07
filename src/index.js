@@ -15,12 +15,15 @@ class ScreenController {
     this.asideSection = this.doc.querySelector(".side-bar-section");
     this.mainSection = this.doc.querySelector(".main-section");
     this.taskSection = this.doc.querySelector(".task-section");
+    this.dialogForm = this.doc.querySelector("#dialog-form");
   }
 
   updateWindow() {
     this.populateSideBarSection();
     this.populateMainSection(this.todoApp.getProject(2));
     this.populateTaskSection(this.todoApp.getTask(2));
+
+    // this.showDialogForm();
   }
 
   displayTaskDetails(task) {
@@ -72,10 +75,12 @@ class ScreenController {
     header.appendChild(titleWrapper);
     content.appendChild(desc);
 
+    editIcon.addEventListener("click", () => this.showDialogForm(task));
+
     this.taskSection.appendChild(header);
     this.taskSection.appendChild(content);
   }
-  
+
   populateTaskSection(task) {
     if (task && task instanceof Task) {
       this.displayTaskDetails(task);
@@ -255,6 +260,10 @@ class ScreenController {
     this.asideSection.appendChild(userSection);
     this.asideSection.appendChild(tasksMenu);
     this.asideSection.appendChild(projectsMenu);
+  }
+
+  showDialogForm(task) {
+    this.dialogForm.showModal();
   }
 
   elementAddClass(elem, classes) {
