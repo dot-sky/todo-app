@@ -1,6 +1,6 @@
 import { Task } from "./task.js";
 import { Project } from "./project.js";
-export { Task };
+export { Task, Project };
 export function TodoApp() {
   let user;
   let tasks = [];
