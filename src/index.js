@@ -16,6 +16,7 @@ class ScreenController {
     this.mainSection = this.doc.querySelector(".main-section");
     this.taskSection = this.doc.querySelector(".task-section");
     this.dialogForm = this.doc.querySelector("#dialog-form");
+    this.dialogForm2 = this.doc.querySelector("#dialog-form2");
   }
 
   updateWindow() {
@@ -75,7 +76,7 @@ class ScreenController {
     header.appendChild(titleWrapper);
     content.appendChild(desc);
 
-    editIcon.addEventListener("click", () => this.showDialogForm(task));
+    editIcon.addEventListener("click", () => this.buildTaskForm(task));
 
     this.taskSection.appendChild(header);
     this.taskSection.appendChild(content);
@@ -265,6 +266,135 @@ class ScreenController {
   showDialogForm(task) {
     this.dialogForm.showModal();
   }
+  showDialogForm2(task) {
+    this.dialogForm2.showModal();
+  }
+  buildTaskForm(task) {
+    const form = this.doc.createElement("form");
+    const header = this.doc.createElement("div");
+    const title = this.createElement("h5", "Todo Editor", "");
+    const btnContainer = this.doc.createElement("div");
+    const deleteBtn = this.doc.createElement("button");
+    const cancelBtn = this.doc.createElement("button");
+    const confirmBtn = this.doc.createElement("button");
+    const deleteIcon = this.createElement("i", "", "fi fi-rr-trash icon");
+    const cancelIcon = this.createElement(
+      "i",
+      "",
+      "fi fi-rr-cross icon icon-cross"
+    );
+    const confirmIcon = this.createElement("i", "", "fi fi-rr-check icon");
+    const statusDateGroup = this.doc.createElement("div");
+    const checkBoxIcon = this.createElement(
+      "i",
+      "",
+      "fi fi-rr-square clickable-icon check-box"
+    );
+    const dueDate = this.createInputElement("date", "dueDate");
+    const titlePrioGroup = this.doc.createElement("div");
+    const titlePrioGroupLeft = this.doc.createElement("div");
+    const titlePrioGroupRight = this.doc.createElement("div");
+    const taskTitle = this.createInputElement("text", "title", "h4");
+    const prioLabel = this.doc.createElement("label");
+    const prioIcon = this.createElement(
+      "i",
+      "",
+      "fi fi-rr-flag-alt icon priority-icon'"
+    );
+    const select = this.doc.createElement("select");
+    const optionNone = this.doc.createElement("option");
+    const optionLow = this.doc.createElement("option");
+    const optionMedium = this.doc.createElement("option");
+    const optionHigh = this.doc.createElement("option");
+    const descContainer = this.doc.createElement("div");
+    const taskDesc = this.doc.createElement("textarea");
+
+    optionNone.textContent = "None";
+    optionLow.textContent = "Low";
+    optionMedium.textContent = "Medium";
+    optionHigh.textContent = "High";
+
+    this.elementAddClass(header, "dialog-header");
+    this.elementAddClass(btnContainer, "button-group");
+    this.elementAddClass(statusDateGroup, "input-status-date");
+    this.elementAddClass(titlePrioGroup, "input-group");
+    this.elementAddClass(titlePrioGroupLeft, "input-group-left");
+    this.elementAddClass(titlePrioGroupRight, "input-group-right");
+    this.elementAddClass(descContainer, "desc-area");
+
+    deleteBtn.setAttribute("id", "delete");
+    cancelBtn.setAttribute("id", "cancel");
+    confirmBtn.setAttribute("type", "submit");
+    confirmBtn.setAttribute("id", "confirm");
+    taskTitle.setAttribute("placeholder", "Todo Title");
+    taskTitle.setAttribute("for", "priority");
+    select.setAttribute("name", "priority");
+    select.setAttribute("id", "priority");
+    optionNone.setAttribute("value", "0");
+    optionLow.setAttribute("value", "1");
+    optionMedium.setAttribute("value", "2");
+    optionHigh.setAttribute("value", "3");
+    taskDesc.setAttribute("id", "desc");
+    taskDesc.setAttribute("name", "desc");
+    taskDesc.setAttribute(
+      "placeholder",
+      "Write the description of your task here..."
+    );
+    taskDesc.setAttribute("rows", "15");
+    taskDesc.setAttribute("cols", "32");
+
+    deleteBtn.addEventListener("click", (event) =>
+      this.deleteSelectedTask(event, task)
+    );
+    cancelBtn.addEventListener("click", (event) => this.closeTaskDialog(event));
+    confirmBtn.addEventListener("click", (event) =>
+      this.updateSelectedTask(event, task)
+    );
+
+    deleteBtn.appendChild(deleteIcon);
+    cancelBtn.appendChild(cancelIcon);
+    confirmBtn.appendChild(confirmIcon);
+    btnContainer.appendChild(deleteBtn);
+    btnContainer.appendChild(cancelBtn);
+    btnContainer.appendChild(confirmBtn);
+    header.appendChild(title);
+    header.appendChild(btnContainer);
+    statusDateGroup.appendChild(checkBoxIcon);
+    statusDateGroup.appendChild(dueDate);
+    titlePrioGroupLeft.appendChild(taskTitle);
+    prioLabel.appendChild(prioIcon);
+    select.appendChild(optionNone);
+    select.appendChild(optionLow);
+    select.appendChild(optionMedium);
+    select.appendChild(optionHigh);
+    titlePrioGroupRight.appendChild(prioLabel);
+    titlePrioGroupRight.appendChild(select);
+    titlePrioGroup.appendChild(titlePrioGroupLeft);
+    titlePrioGroup.appendChild(titlePrioGroupRight);
+    descContainer.appendChild(taskDesc);
+
+    form.appendChild(header);
+    form.appendChild(statusDateGroup);
+    form.appendChild(titlePrioGroup);
+    form.appendChild(descContainer);
+    this.dialogForm.appendChild(form);
+    this.showDialogForm();
+  }
+
+  closeTaskDialog(event) {
+    event.preventDefault();
+    this.dialogForm.close();
+  }
+
+  deleteSelectedTask(event) {
+    event.preventDefault();
+    this.dialogForm.close();
+  }
+
+  updateSelectedTask(event) {
+    event.preventDefault();
+    this.dialogForm.close();
+  }
 
   elementAddClass(elem, classes) {
     if (!classes) return;
@@ -280,6 +410,15 @@ class ScreenController {
     elem.textContent = content;
     this.elementAddClass(elem, classes);
     return elem;
+  }
+
+  createInputElement(type, name, classes) {
+    const input = this.doc.createElement("input");
+    input.setAttribute("type", type);
+    input.setAttribute("id", name);
+    input.setAttribute("name", name);
+    this.elementAddClass(input, classes);
+    return input;
   }
 }
 const screenCont = new ScreenController(document);

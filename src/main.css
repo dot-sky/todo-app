@@ -348,12 +348,13 @@ dialog {
   padding: var(--space-4x);
 }
 
-#dialog-form {
+#dialog-form,
+#dialog-form2 {
   min-width: min(50vw, 1000px);
   /* min-height: min(60vh, 1000px); */
-  
 }
-#dialog-form > form {
+#dialog-form > form,
+#dialog-form2 > form {
   display: flex;
   flex-direction: column;
   gap: var(--space-3x);
@@ -412,7 +413,7 @@ input:focus-visible {
   gap: var(--space-2x);
 }
 
-input#date {
+input#dueDate {
   border: 0;
   background-color: var(--background);
   color: var(--primary-600);
@@ -450,7 +451,7 @@ input#title {
 select {
   border: 1px var(--text-200) solid;
   border-radius: var(--space-1x);
-  padding: calc(var(--space-1x) * 0.5) var(--space-1x);
+  padding: var(--space-1x) var(--space-1x);
   width: 100%;
 }
 
