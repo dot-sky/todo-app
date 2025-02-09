@@ -25,7 +25,7 @@ class ScreenController {
 
   updateWindow() {
     this.populateSideBarSection();
-    this.populateMainSection(this.todoApp.getProject(2));
+    this.selectProject(this.todoApp.getProject(2));
     this.selectTask(this.todoApp.getTask(2));
 
     // this.showDialogForm();
@@ -88,6 +88,7 @@ class ScreenController {
     this.taskSection.appendChild(header);
     this.taskSection.appendChild(content);
   }
+
   set selectedTask(task) {
     if (task && task instanceof Task) {
       this.#selectedTask = task;
@@ -202,14 +203,30 @@ class ScreenController {
     this.mainSection.appendChild(mainList);
   }
 
-  populateMainSection(list) {
-    if (list && list instanceof Project) {
-      this.selectedProject = list;
-      this.selectedTask = null;
-      this.displayMainSection(this.selectedProject);
-      this.renderTaskSection();
+  set selectedProject(value) {
+    if (value && value instanceof Project) {
+      this.#selectedProject = value;
     } else {
-      this.displayMessage(this.mainSection, "Select a project ... ");
+      this.#selectedProject = null;
+    }
+  }
+
+  get selectedProject() {
+    return this.#selectedProject;
+  }
+
+  selectProject(value) {
+    this.selectedProject = value;
+    this.selectedTask = null;
+    this.renderProjectSection();
+    this.renderTaskSection();
+  }
+
+  renderProjectSection() {
+    if (this.selectedProject) {
+      this.displayMainSection(this.selectedProject);
+    } else {
+      this.displayMessage(this.mainSection, "Select a task ... ");
     }
   }
 
@@ -261,9 +278,7 @@ class ScreenController {
     for (const project of this.todoApp.getAllProjects()) {
       const listItem = this.doc.createElement("li");
       listItem.textContent = project.name;
-      listItem.addEventListener("click", () =>
-        this.populateMainSection(project)
-      );
+      listItem.addEventListener("click", () => this.selectProject(project));
 
       projectMenuList.appendChild(listItem);
     }
@@ -428,7 +443,7 @@ class ScreenController {
     event.preventDefault();
 
     this.todoApp.deleteTask(task.taskId);
-    this.populateMainSection(selectedProject);
+    this.renderProjectSection();
     this.selectTask(null);
 
     this.dialogForm.close();
@@ -441,13 +456,12 @@ class ScreenController {
 
   updateSelectedTask(event, task, values) {
     event.preventDefault();
-    console.log(values);
 
     task.updateTask(values);
-
-    console.log(task);
-    this.dialogForm.close();
+    this.renderProjectSection();
     this.renderTaskSection();
+
+    this.dialogForm.close();
   }
 
   elementAddClass(elem, classes) {
