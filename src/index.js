@@ -54,9 +54,12 @@ class ScreenController {
       "",
       "fi fi-rr-flag-alt icon priority-icon"
     );
+
+    //task content
     date.textContent = task.dueDate;
     title.textContent = task.title;
     desc.textContent = task.desc;
+    priorityIcon.textContent = task.priority;
 
     this.elementAddClass(header, "task-header");
     this.elementAddClass(controls, "task-controls");
@@ -270,9 +273,11 @@ class ScreenController {
     this.dialogForm2.showModal();
   }
   buildTaskForm(task) {
+    this.dialogForm.textContent = "";
+
     const form = this.doc.createElement("form");
     const header = this.doc.createElement("div");
-    const title = this.createElement("h5", "Todo Editor", "");
+    const title = this.createElement("h5", "Todo editor", "");
     const btnContainer = this.doc.createElement("div");
     const deleteBtn = this.doc.createElement("button");
     const cancelBtn = this.doc.createElement("button");
@@ -285,7 +290,7 @@ class ScreenController {
     );
     const confirmIcon = this.createElement("i", "", "fi fi-rr-check icon");
     const statusDateGroup = this.doc.createElement("div");
-    const checkBoxIcon = this.createElement(
+    const statusIcon = this.createElement(
       "i",
       "",
       "fi fi-rr-square clickable-icon check-box"
@@ -302,19 +307,28 @@ class ScreenController {
       "fi fi-rr-flag-alt icon priority-icon'"
     );
     const select = this.doc.createElement("select");
-    const optionNone = this.doc.createElement("option");
-    const optionLow = this.doc.createElement("option");
-    const optionMedium = this.doc.createElement("option");
-    const optionHigh = this.doc.createElement("option");
     const descContainer = this.doc.createElement("div");
     const taskDesc = this.doc.createElement("textarea");
 
-    optionNone.textContent = "None";
-    optionLow.textContent = "Low";
-    optionMedium.textContent = "Medium";
-    optionHigh.textContent = "High";
+    // adding options
+    const options = [];
+    for (let i = 0; i < Task.priority.length; i++) {
+      const option = this.doc.createElement("option");
+      option.textContent = Task.priority[i];
+      option.setAttribute("value", i);
+      select.appendChild(option);
+      options.push(option);
+    }
+
+    // Todo content
+    // status
+    dueDate.setAttribute("value", task.dueDate);
+    taskTitle.setAttribute("value", task.title);
+    taskDesc.textContent = task.desc;
+    options[task.priority].setAttribute("selected", "");
 
     this.elementAddClass(header, "dialog-header");
+    this.elementAddClass(taskTitle, "h4");
     this.elementAddClass(btnContainer, "button-group");
     this.elementAddClass(statusDateGroup, "input-status-date");
     this.elementAddClass(titlePrioGroup, "input-group");
@@ -330,10 +344,6 @@ class ScreenController {
     taskTitle.setAttribute("for", "priority");
     select.setAttribute("name", "priority");
     select.setAttribute("id", "priority");
-    optionNone.setAttribute("value", "0");
-    optionLow.setAttribute("value", "1");
-    optionMedium.setAttribute("value", "2");
-    optionHigh.setAttribute("value", "3");
     taskDesc.setAttribute("id", "desc");
     taskDesc.setAttribute("name", "desc");
     taskDesc.setAttribute(
