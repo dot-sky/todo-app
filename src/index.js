@@ -3,6 +3,9 @@ import { TodoApp, Project, Task } from "./app.js";
 import { add } from "date-fns";
 
 class ScreenController {
+  static EDIT_TASK = 0;
+  static CREATE_TASK = 1;
+
   #selectedProject = null;
   #selectedTask = null;
   selectedTask;
@@ -26,8 +29,8 @@ class ScreenController {
 
   updateWindow() {
     this.populateSideBarSection();
-    this.selectProject(this.todoApp.getProject(2));
-    this.selectTask(this.todoApp.getTask(2));
+    this.selectProject(this.todoApp.getProject(1));
+    this.selectTask(this.todoApp.getTask(4));
   }
 
   // Tasks
@@ -223,6 +226,8 @@ class ScreenController {
     this.mainSection.appendChild(header);
     this.mainSection.appendChild(mainList);
   }
+
+  // Sidebar
   populateSideBarSection() {
     const appSection = this.doc.createElement("div");
     const userSection = this.doc.createElement("div");
@@ -247,9 +252,12 @@ class ScreenController {
       taskMenuList.appendChild(listItem);
     }
 
-    this.elementAddClass(addTaskIcon, "fi-rr-add icon");
+    this.elementAddClass(addTaskIcon, "fi-rr-add clickable-icon icon");
     taskHeading.classList.add("menu-segment-heading");
     taskMenuList.classList.add("menu-elements");
+
+    // Event
+    addTaskIcon.addEventListener("click", () => this.createTaskForm());
 
     addTaskLink.appendChild(addTaskIcon);
     taskHeading.appendChild(taskTitle);
@@ -300,7 +308,7 @@ class ScreenController {
   showDialogForm2(task) {
     this.dialogForm2.showModal();
   }
-  buildTaskForm(task) {
+  buildTaskForm(task, formMode) {
     this.dialogForm.textContent = "";
 
     const form = this.doc.createElement("form");
@@ -388,13 +396,22 @@ class ScreenController {
       taskDesc,
       select,
     };
-    this.bindEventsTaskForm(deleteBtn, cancelBtn, confirmBtn, task, formInputs);
+    this.bindEventsTaskForm(
+      deleteBtn,
+      cancelBtn,
+      confirmBtn,
+      task,
+      formInputs,
+      formMode
+    );
 
     deleteBtn.appendChild(deleteIcon);
     cancelBtn.appendChild(cancelIcon);
     confirmBtn.appendChild(confirmIcon);
     btnContainer.appendChild(deleteBtn);
-    btnContainer.appendChild(cancelBtn);
+    if (formMode !== ScreenController.CREATE_TASK) {
+      btnContainer.appendChild(cancelBtn);
+    }
     btnContainer.appendChild(confirmBtn);
     header.appendChild(title);
     header.appendChild(btnContainer);
@@ -465,6 +482,13 @@ class ScreenController {
     this.dialogForm.close();
   }
 
+  createTaskForm(event) {
+    const newTask = this.todoApp.createTodo();
+    newTask.assignToProject(this.selectedProject.getId());
+
+    this.selectTask(newTask);
+    this.buildTaskForm(newTask, ScreenController.CREATE_TASK);
+  }
   // DOM
   elementAddClass(elem, classes) {
     if (!classes) return;
