@@ -3,6 +3,10 @@ import { TodoApp, Project, Task } from "./app.js";
 import { add } from "date-fns";
 
 class ScreenController {
+  #selectedProject = null;
+  #selectedTask = null;
+  selectedTask;
+
   constructor(doc) {
     this.doc = doc;
     this.todoApp = new TodoApp();
@@ -22,7 +26,7 @@ class ScreenController {
   updateWindow() {
     this.populateSideBarSection();
     this.populateMainSection(this.todoApp.getProject(2));
-    this.populateTaskSection(this.todoApp.getTask(2));
+    this.selectTask(this.todoApp.getTask(2));
 
     // this.showDialogForm();
   }
@@ -84,10 +88,26 @@ class ScreenController {
     this.taskSection.appendChild(header);
     this.taskSection.appendChild(content);
   }
-
-  populateTaskSection(task) {
+  set selectedTask(task) {
     if (task && task instanceof Task) {
-      this.displayTaskDetails(task);
+      this.#selectedTask = task;
+    } else {
+      this.#selectedTask = null;
+    }
+  }
+
+  get selectedTask() {
+    return this.#selectedTask;
+  }
+
+  selectTask(task) {
+    this.selectedTask = task;
+    this.renderTaskSection();
+  }
+
+  renderTaskSection() {
+    if (this.selectedTask) {
+      this.displayTaskDetails(this.selectedTask);
     } else {
       this.displayMessage(this.taskSection, "Select a task ... ");
     }
@@ -174,9 +194,7 @@ class ScreenController {
       itemContainer.appendChild(desc);
       itemContainer.appendChild(dateContainer);
 
-      itemContainer.addEventListener("click", () =>
-        this.populateTaskSection(task)
-      );
+      itemContainer.addEventListener("click", () => this.selectTask(task));
       mainList.appendChild(itemContainer);
     }
 
@@ -186,8 +204,10 @@ class ScreenController {
 
   populateMainSection(list) {
     if (list && list instanceof Project) {
-      this.displayMainSection(list);
-      this.populateTaskSection();
+      this.selectedProject = list;
+      this.selectedTask = null;
+      this.displayMainSection(this.selectedProject);
+      this.renderTaskSection();
     } else {
       this.displayMessage(this.mainSection, "Select a project ... ");
     }
@@ -404,15 +424,18 @@ class ScreenController {
     );
   }
 
-  closeTaskDialog(event) {
+  deleteSelectedTask(event, task) {
     event.preventDefault();
+
+    this.todoApp.deleteTask(task.taskId);
+    this.populateMainSection(selectedProject);
+    this.selectTask(null);
+
     this.dialogForm.close();
   }
 
-  deleteSelectedTask(event) {
+  closeTaskDialog(event) {
     event.preventDefault();
-
-    
     this.dialogForm.close();
   }
 
@@ -424,7 +447,7 @@ class ScreenController {
 
     console.log(task);
     this.dialogForm.close();
-    this.populateTaskSection(task);
+    this.renderTaskSection();
   }
 
   elementAddClass(elem, classes) {
