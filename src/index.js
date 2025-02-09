@@ -6,6 +6,7 @@ class ScreenController {
   #selectedProject = null;
   #selectedTask = null;
   selectedTask;
+  selectedProject;
 
   constructor(doc) {
     this.doc = doc;
@@ -27,8 +28,32 @@ class ScreenController {
     this.populateSideBarSection();
     this.selectProject(this.todoApp.getProject(2));
     this.selectTask(this.todoApp.getTask(2));
+  }
 
-    // this.showDialogForm();
+  // Tasks
+  set selectedTask(task) {
+    if (task && task instanceof Task) {
+      this.#selectedTask = task;
+    } else {
+      this.#selectedTask = null;
+    }
+  }
+
+  get selectedTask() {
+    return this.#selectedTask;
+  }
+
+  selectTask(task) {
+    this.selectedTask = task;
+    this.renderTaskSection();
+  }
+
+  renderTaskSection() {
+    if (this.selectedTask) {
+      this.displayTaskDetails(this.selectedTask);
+    } else {
+      this.displayMessage(this.taskSection, "Select a task ... ");
+    }
   }
 
   displayTaskDetails(task) {
@@ -89,36 +114,32 @@ class ScreenController {
     this.taskSection.appendChild(content);
   }
 
-  set selectedTask(task) {
-    if (task && task instanceof Task) {
-      this.#selectedTask = task;
+  // Projects
+  set selectedProject(value) {
+    if (value && value instanceof Project) {
+      this.#selectedProject = value;
     } else {
-      this.#selectedTask = null;
+      this.#selectedProject = null;
     }
   }
 
-  get selectedTask() {
-    return this.#selectedTask;
+  get selectedProject() {
+    return this.#selectedProject;
   }
 
-  selectTask(task) {
-    this.selectedTask = task;
+  selectProject(value) {
+    this.selectedProject = value;
+    this.selectedTask = null;
+    this.renderProjectSection();
     this.renderTaskSection();
   }
 
-  renderTaskSection() {
-    if (this.selectedTask) {
-      this.displayTaskDetails(this.selectedTask);
+  renderProjectSection() {
+    if (this.selectedProject) {
+      this.displayMainSection(this.selectedProject);
     } else {
-      this.displayMessage(this.taskSection, "Select a task ... ");
+      this.displayMessage(this.mainSection, "Select a task ... ");
     }
-  }
-
-  displayMessage(section, message) {
-    section.textContent = "";
-    const msg = this.doc.createElement("p");
-    msg.textContent = message;
-    section.appendChild(msg);
   }
 
   displayMainSection(list) {
@@ -202,34 +223,6 @@ class ScreenController {
     this.mainSection.appendChild(header);
     this.mainSection.appendChild(mainList);
   }
-
-  set selectedProject(value) {
-    if (value && value instanceof Project) {
-      this.#selectedProject = value;
-    } else {
-      this.#selectedProject = null;
-    }
-  }
-
-  get selectedProject() {
-    return this.#selectedProject;
-  }
-
-  selectProject(value) {
-    this.selectedProject = value;
-    this.selectedTask = null;
-    this.renderProjectSection();
-    this.renderTaskSection();
-  }
-
-  renderProjectSection() {
-    if (this.selectedProject) {
-      this.displayMainSection(this.selectedProject);
-    } else {
-      this.displayMessage(this.mainSection, "Select a task ... ");
-    }
-  }
-
   populateSideBarSection() {
     const appSection = this.doc.createElement("div");
     const userSection = this.doc.createElement("div");
@@ -423,7 +416,15 @@ class ScreenController {
     this.showDialogForm();
   }
 
-  // Events
+  // General
+  displayMessage(section, message) {
+    section.textContent = "";
+    const msg = this.doc.createElement("p");
+    msg.textContent = message;
+    section.appendChild(msg);
+  }
+
+  // Task Events
   bindEventsTaskForm(deleteBtn, cancelBtn, confirmBtn, task, inputs) {
     deleteBtn.addEventListener("click", (event) =>
       this.deleteSelectedTask(event, task)
@@ -464,6 +465,7 @@ class ScreenController {
     this.dialogForm.close();
   }
 
+  // DOM
   elementAddClass(elem, classes) {
     if (!classes) return;
 
