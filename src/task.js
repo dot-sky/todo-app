@@ -1,22 +1,24 @@
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 export class Task {
   static #id = 0;
+  static priority = ["None", "Low", "Medium", "High"];
+  static DEFAULT_PROJECT = 0;
+  static DEFAULT_PRIO = 0;
   #projectId;
   #taskId;
+  #dueDate;
+  #priority;
+
   constructor(title, desc, dueDate, priority, status, projectId, checklist) {
     this.title = title || "";
     this.desc = desc || "";
-    this.dueDate = this.setDueDate(dueDate);
-    this.priority = priority || 0;
+    this.dueDate = dueDate;
+    this.priority = priority;
     this.status = status || 0;
-    this.#projectId = projectId || 0;
+    this.projectId = projectId;
     this.checklist = checklist || [];
 
-    this.#taskId = Task.#assignId();
-  }
-
-  static #assignId() {
-    return Task.#id++;
+    this.taskId = Task.#id;
   }
 
   assignToProject(projectId) {
@@ -26,22 +28,55 @@ export class Task {
   markComplete() {
     this.status = 1;
   }
-  
+
   changePriority(priority) {
     this.priority = priority;
   }
 
+  updateTask(values) {
+    this.title = values.title;
+    this.desc = values.desc;
+    this.dueDate = values.dueDate;
+    this.priority = values.priority;
+  }
+
   // settters
-  setDueDate(date) {
-    return format(date || Date(Date.now()), "yyyy-MM-dd");
+  set dueDate(date) {
+    const isoDate = parseISO(date);
+    this.#dueDate = format(isoDate || Date(Date.now()), "yyyy-MM-dd");
+  }
+
+  set priority(value) {
+    if (value > Task.priority.length - 1 || value < 0) {
+      this.#priority = Task.DEFAULT_PRIO;
+    } else {
+      this.#priority = value;
+    }
+  }
+
+  set taskId(id) {
+    this.#taskId = id;
+    Task.#id++;
+  }
+
+  set projectId(id) {
+    this.#projectId = id || Task.DEFAULT_PROJECT;
   }
 
   // getters
-  getId() {
+  get dueDate() {
+    return this.#dueDate;
+  }
+
+  get priority() {
+    return this.#priority;
+  }
+
+  get taskId() {
     return this.#taskId;
   }
 
-  getProjectId() {
+  get projectId() {
     return this.#projectId;
   }
 

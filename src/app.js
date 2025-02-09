@@ -55,10 +55,10 @@ export function TodoApp() {
   const getTaskByIndex = (index) => tasks[index];
 
   const getProjectTasks = (projectId) =>
-    tasks.filter((task) => task.getProjectId() === projectId);
+    tasks.filter((task) => task.projectId === projectId);
 
   const getTask = (id) => {
-    const task = tasks.filter((task) => task.getId() === id)[0];
+    const task = tasks.filter((task) => task.taskId === id)[0];
     if (!task) {
       console.log("Task id not found");
     }
@@ -116,7 +116,7 @@ export function TodoApp() {
     // reassigning tasks to default project
     if (removeProject(projectId)) {
       tasks.forEach((task) => {
-        if (task.getProjectId() === projectId) {
+        if (task.projectId === projectId) {
           task.assignToProject(DEFAULT_PROJECT_ID);
         }
       });
@@ -126,7 +126,7 @@ export function TodoApp() {
   const deleteProjectWithTasks = (projectId) => {
     if (removeProject(projectId)) {
       const filteredTasks = tasks.filter(
-        (task) => task.getProjectId() !== projectId
+        (task) => task.projectId !== projectId
       );
       tasks = filteredTasks;
     }
@@ -150,7 +150,7 @@ export function TodoApp() {
 
   const showProjectTasks = (projectId) => {
     for (const task of tasks) {
-      if (task.getProjectId() === projectId) {
+      if (task.projectId === projectId) {
         task.logSummary();
       }
     }
@@ -242,6 +242,7 @@ export function TodoApp() {
     createProject("Work", "All things related to work");
     createProject("University", "For my classses");
     createProject("Fun", "Anything related to fun activities!");
+    showTasks();
     getTask(3).assignToProject(1);
     getTask(4).assignToProject(1);
     getTask(5).assignToProject(1);
