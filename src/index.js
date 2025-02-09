@@ -343,13 +343,14 @@ class ScreenController {
     taskDesc.setAttribute("rows", "15");
     taskDesc.setAttribute("cols", "32");
 
-    deleteBtn.addEventListener("click", (event) =>
-      this.deleteSelectedTask(event, task)
-    );
-    cancelBtn.addEventListener("click", (event) => this.closeTaskDialog(event));
-    confirmBtn.addEventListener("click", (event) =>
-      this.updateSelectedTask(event, task)
-    );
+    // events
+    const formInputs = {
+      dueDate,
+      taskTitle,
+      taskDesc,
+      select,
+    };
+    this.bindEventsTaskForm(deleteBtn, cancelBtn, confirmBtn, task, formInputs);
 
     deleteBtn.appendChild(deleteIcon);
     cancelBtn.appendChild(cancelIcon);
@@ -359,14 +360,10 @@ class ScreenController {
     btnContainer.appendChild(confirmBtn);
     header.appendChild(title);
     header.appendChild(btnContainer);
-    statusDateGroup.appendChild(checkBoxIcon);
+    statusDateGroup.appendChild(statusIcon);
     statusDateGroup.appendChild(dueDate);
     titlePrioGroupLeft.appendChild(taskTitle);
     prioLabel.appendChild(prioIcon);
-    select.appendChild(optionNone);
-    select.appendChild(optionLow);
-    select.appendChild(optionMedium);
-    select.appendChild(optionHigh);
     titlePrioGroupRight.appendChild(prioLabel);
     titlePrioGroupRight.appendChild(select);
     titlePrioGroup.appendChild(titlePrioGroupLeft);
@@ -381,6 +378,22 @@ class ScreenController {
     this.showDialogForm();
   }
 
+  // Events
+  bindEventsTaskForm(deleteBtn, cancelBtn, confirmBtn, task, inputs) {
+    deleteBtn.addEventListener("click", (event) =>
+      this.deleteSelectedTask(event, task)
+    );
+    cancelBtn.addEventListener("click", (event) => this.closeTaskDialog(event));
+    confirmBtn.addEventListener("click", (event) =>
+      this.updateSelectedTask(event, task, {
+        dueDate: inputs.dueDate.value,
+        title: inputs.taskTitle.value,
+        desc: inputs.taskDesc.value,
+        priority: inputs.select.value,
+      })
+    );
+  }
+
   closeTaskDialog(event) {
     event.preventDefault();
     this.dialogForm.close();
@@ -388,12 +401,20 @@ class ScreenController {
 
   deleteSelectedTask(event) {
     event.preventDefault();
+
+    
     this.dialogForm.close();
   }
 
-  updateSelectedTask(event) {
+  updateSelectedTask(event, task, values) {
     event.preventDefault();
+    console.log(values);
+
+    task.updateTask(values);
+
+    console.log(task);
     this.dialogForm.close();
+    this.populateTaskSection(task);
   }
 
   elementAddClass(elem, classes) {
