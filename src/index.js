@@ -3,8 +3,8 @@ import { TodoApp, Project, Task } from "./app.js";
 import { add } from "date-fns";
 
 class ScreenController {
-  static EDIT_TASK = 0;
-  static CREATE_TASK = 1;
+  static FORM_EDIT_MODE = 0;
+  static FORM_CREATE_MODE = 1;
 
   #selectedProject = null;
   #selectedTask = null;
@@ -24,13 +24,14 @@ class ScreenController {
     this.mainSection = this.doc.querySelector(".main-section");
     this.taskSection = this.doc.querySelector(".task-section");
     this.dialogForm = this.doc.querySelector("#dialog-form");
-    this.dialogForm2 = this.doc.querySelector("#dialog-form2");
+    this.projectForm = this.doc.querySelector("#project-form");
   }
 
   updateWindow() {
     this.populateSideBarSection();
     this.selectProject(this.todoApp.getProject(1));
     this.selectTask(this.todoApp.getTask(4));
+    // this.projectForm.showModal();
   }
 
   // Tasks
@@ -141,7 +142,7 @@ class ScreenController {
     if (this.selectedProject) {
       this.displayMainSection(this.selectedProject);
     } else {
-      this.displayMessage(this.mainSection, "Select a task ... ");
+      this.displayMessage(this.mainSection, "Select a project ... ");
     }
   }
 
@@ -207,6 +208,9 @@ class ScreenController {
       desc.classList.add("main-item-desc");
       dateContainer.classList.add("main-item-date");
       checkBoxLink.classList.add("check-box-link");
+
+      // event
+      editIcon.addEventListener("click", () => this.buildProjectForm(list));
 
       checkBoxLink.appendChild(checkBoxIcon);
       taskPriority.appendChild(priorityIcon);
@@ -288,6 +292,9 @@ class ScreenController {
     projectHeading.classList.add("menu-segment-heading");
     projectMenuList.classList.add("menu-elements");
 
+    // Event
+    addProjectIcon.addEventListener("click", () => this.createProjectForm());
+
     addProjectLink.appendChild(addProjectIcon);
     projectHeading.appendChild(projectTitle);
     projectHeading.appendChild(addProjectLink);
@@ -305,9 +312,84 @@ class ScreenController {
   showDialogForm(task) {
     this.dialogForm.showModal();
   }
-  showDialogForm2(task) {
-    this.dialogForm2.showModal();
+  showProjectForm() {
+    this.projectForm.showModal();
   }
+
+  buildProjectForm(project, formMode) {
+    this.projectForm.textContent = "";
+
+    const form = this.doc.createElement("form");
+    const header = this.doc.createElement("div");
+    const title = this.createElement("h5", "Project editor", "");
+    const btnContainer = this.doc.createElement("div");
+    const deleteBtn = this.doc.createElement("button");
+    const cancelBtn = this.doc.createElement("button");
+    const confirmBtn = this.doc.createElement("button");
+    const deleteIcon = this.createElement("i", "", "fi fi-rr-trash icon");
+    const cancelIcon = this.createElement(
+      "i",
+      "",
+      "fi fi-rr-cross icon icon-cross"
+    );
+    const confirmIcon = this.createElement("i", "", "fi fi-rr-check icon");
+
+    const projectTitle = this.createInputElement("text", "title", "h4");
+    const descContainer = this.doc.createElement("div");
+    const projectDesc = this.doc.createElement("textarea");
+
+    projectTitle.setAttribute("value", project.name);
+    projectDesc.textContent = project.desc;
+    this.elementAddClass(header, "dialog-header");
+    this.elementAddClass(projectTitle, "h4");
+    this.elementAddClass(btnContainer, "button-group");
+    this.elementAddClass(descContainer, "desc-area");
+
+    deleteBtn.setAttribute("id", "delete");
+    cancelBtn.setAttribute("id", "cancel");
+    confirmBtn.setAttribute("type", "submit");
+    confirmBtn.setAttribute("id", "confirm");
+    projectTitle.setAttribute("placeholder", "Project title");
+    projectTitle.setAttribute("for", "priority");
+    projectDesc.setAttribute("id", "desc");
+    projectDesc.setAttribute("name", "desc");
+    projectDesc.setAttribute(
+      "placeholder",
+      "Write the description of your project here..."
+    );
+    projectDesc.setAttribute("rows", "15");
+    projectDesc.setAttribute("cols", "32");
+
+    //events
+    const formInputs = { projectTitle, projectDesc };
+    this.bindEventsProjectForm(
+      deleteBtn,
+      cancelBtn,
+      confirmBtn,
+      project,
+      formInputs,
+      formMode
+    );
+
+    deleteBtn.appendChild(deleteIcon);
+    cancelBtn.appendChild(cancelIcon);
+    confirmBtn.appendChild(confirmIcon);
+    btnContainer.appendChild(deleteBtn);
+    if (formMode !== ScreenController.FORM_CREATE_MODE) {
+      btnContainer.appendChild(cancelBtn);
+    }
+    btnContainer.appendChild(confirmBtn);
+    header.appendChild(title);
+    header.appendChild(btnContainer);
+    descContainer.appendChild(projectDesc);
+
+    form.appendChild(header);
+    form.appendChild(projectTitle);
+    form.appendChild(descContainer);
+    this.projectForm.appendChild(form);
+    this.showProjectForm();
+  }
+
   buildTaskForm(task, formMode) {
     this.dialogForm.textContent = "";
 
@@ -430,7 +512,7 @@ class ScreenController {
     cancelBtn.appendChild(cancelIcon);
     confirmBtn.appendChild(confirmIcon);
     btnContainer.appendChild(deleteBtn);
-    if (formMode !== ScreenController.CREATE_TASK) {
+    if (formMode !== ScreenController.FORM_CREATE_MODE) {
       btnContainer.appendChild(cancelBtn);
     }
     btnContainer.appendChild(confirmBtn);
@@ -493,7 +575,7 @@ class ScreenController {
 
   updateSelectedTask(event, task, values) {
     event.preventDefault();
-    
+
     task.updateTask(values);
     const choosenProject = this.todoApp.getProject(values.projectId);
     this.selectProject(choosenProject);
@@ -511,12 +593,69 @@ class ScreenController {
       projectId: parseInt(inputs.projectSelect.value),
     };
   }
+
   createTaskForm(event) {
     const newTask = this.todoApp.createTodo();
     newTask.assignToProject(this.selectedProject.id);
 
-    this.selectTask(newTask);
-    this.buildTaskForm(newTask, ScreenController.CREATE_TASK);
+    // this.selectTask(newTask);
+    this.buildTaskForm(newTask, ScreenController.FORM_CREATE_MODE);
+  }
+
+  // Project Events
+
+  bindEventsProjectForm(deleteBtn, cancelBtn, confirmBtn, project, inputs) {
+    deleteBtn.addEventListener("click", (event) =>
+      this.deleteSelectedProject(event, project)
+    );
+    cancelBtn.addEventListener("click", (event) =>
+      this.closeProjectDialog(event)
+    );
+    confirmBtn.addEventListener("click", (event) =>
+      this.updateSelectedProject(
+        event,
+        project,
+        this.parseProjectFormInputs(inputs)
+      )
+    );
+  }
+
+  deleteSelectedProject(event, project) {
+    event.preventDefault();
+
+    this.todoApp.deleteProjectWithTasks(project.id);
+    this.populateSideBarSection();
+    this.selectProject(null);
+
+    this.projectForm.close();
+  }
+
+  closeProjectDialog(event) {
+    event.preventDefault();
+    this.projectForm.close();
+  }
+
+  updateSelectedProject(event, project, values) {
+    event.preventDefault();
+
+    project.update(values);
+    this.populateSideBarSection();
+    this.renderProjectSection();
+
+    this.projectForm.close();
+  }
+
+  parseProjectFormInputs(inputs) {
+    return {
+      name: inputs.projectTitle.value,
+      desc: inputs.projectDesc.value,
+    };
+  }
+
+  createProjectForm(event) {
+    const newProject = this.todoApp.createProject();
+
+    this.buildProjectForm(newProject, ScreenController.FORM_CREATE_MODE);
   }
   // DOM
   elementAddClass(elem, classes) {

@@ -12,7 +12,10 @@ export class Project {
     project.#projectId = Project.#id;
     Project.#id++;
   }
-
+  update(values) {
+    this.name = values.name;
+    this.desc = values.desc;
+  }
   // getters
   get id() {
     return this.#projectId;

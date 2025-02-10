@@ -88,6 +88,7 @@ export function TodoApp() {
   const createProject = (name, desc) => {
     const project = new Project(name, desc);
     projects.push(project);
+    return project;
   };
 
   const getProjectByIndex = (index) => projects[index];
@@ -99,6 +100,8 @@ export function TodoApp() {
     }
     return project || {};
   };
+
+  const getDefaultProject = () => getProject(DEFAULT_PROJECT_ID);
 
   const removeProject = (projectId) => {
     const index = projects.findIndex((project) => project.id === projectId);
@@ -262,6 +265,7 @@ export function TodoApp() {
     getProjectTasks,
     deleteTask,
     getProject,
+    getDefaultProject,
     getAllProjects,
     deleteProject,
     deleteProjectWithTasks,
