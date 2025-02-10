@@ -4,15 +4,17 @@ export class Project {
   constructor(name, desc) {
     this.name = name || "";
     this.desc = desc || "";
-    this.#projectId = Project.#assignId();
+
+    Project.#assignId(this);
   }
 
-  static #assignId() {
-    return Project.#id++;
+  static #assignId(project) {
+    project.#projectId = Project.#id;
+    Project.#id++;
   }
 
   // getters
-  getId() {
+  get id() {
     return this.#projectId;
   }
 
