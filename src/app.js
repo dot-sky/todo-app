@@ -17,7 +17,7 @@ export function TodoApp() {
       "Add your personal projects here."
     );
     projects.push(defaultProject);
-    DEFAULT_PROJECT_ID = defaultProject.getId();
+    DEFAULT_PROJECT_ID = defaultProject.id;
   };
 
   const getTaskMenu = () => taskMenu;
@@ -43,6 +43,7 @@ export function TodoApp() {
       checklist
     );
     tasks.push(task);
+    return task;
   };
 
   const showTasks = () => {
@@ -67,14 +68,14 @@ export function TodoApp() {
 
   const addTaskToProject = (task, project) => {
     if (task && project) {
-      task.assignToProject(project.getId());
+      task.assignToProject(project.id);
     } else {
       console.log("Task or project is null");
     }
   };
 
   const deleteTask = (taskId) => {
-    const index = tasks.findIndex((task) => task.getId() === taskId);
+    const index = tasks.findIndex((task) => task.taskId === taskId);
     if (index >= 0) {
       tasks.splice(index, 1);
     } else {
@@ -92,7 +93,7 @@ export function TodoApp() {
   const getProjectByIndex = (index) => projects[index];
 
   const getProject = (id) => {
-    const project = projects.filter((project) => project.getId() === id)[0];
+    const project = projects.filter((project) => project.id === id)[0];
     if (!project) {
       console.log("no project id found");
     }
@@ -100,9 +101,7 @@ export function TodoApp() {
   };
 
   const removeProject = (projectId) => {
-    const index = projects.findIndex(
-      (project) => project.getId() === projectId
-    );
+    const index = projects.findIndex((project) => project.id === projectId);
     if (index >= 0) {
       projects.splice(index, 1);
       return true;
@@ -144,7 +143,7 @@ export function TodoApp() {
     console.log("Showing projects w/ details:");
     for (const project of projects) {
       project.logFormatted();
-      showProjectTasks(project.getId());
+      showProjectTasks(project.id);
     }
   };
 
