@@ -179,7 +179,7 @@ class ScreenController {
     header.appendChild(headerDesc);
 
     // List
-    const tasks = this.todoApp.getProjectTasks(list.getId());
+    const tasks = this.todoApp.getProjectTasks(list.id);
     for (const task of tasks) {
       const itemContainer = this.doc.createElement("div");
       const desc = this.doc.createElement("div");
@@ -326,12 +326,15 @@ class ScreenController {
     );
     const confirmIcon = this.createElement("i", "", "fi fi-rr-check icon");
     const statusDateGroup = this.doc.createElement("div");
+    const statusDateGroupLeft = this.doc.createElement("div");
+    const statusDateGroupRight = this.doc.createElement("div");
     const statusIcon = this.createElement(
       "i",
       "",
       "fi fi-rr-square clickable-icon check-box"
     );
     const dueDate = this.createInputElement("date", "dueDate");
+    const projectSelect = this.doc.createElement("select");
     const titlePrioGroup = this.doc.createElement("div");
     const titlePrioGroupLeft = this.doc.createElement("div");
     const titlePrioGroupRight = this.doc.createElement("div");
@@ -346,7 +349,7 @@ class ScreenController {
     const descContainer = this.doc.createElement("div");
     const taskDesc = this.doc.createElement("textarea");
 
-    // adding options
+    // adding priority options
     const options = [];
     for (let i = 0; i < Task.priority.length; i++) {
       const option = this.doc.createElement("option");
@@ -355,7 +358,19 @@ class ScreenController {
       select.appendChild(option);
       options.push(option);
     }
+    // adding project options
+    for (const project of this.todoApp.getAllProjects()) {
+      const option = this.doc.createElement("option");
+      option.textContent = project.name;
+      option.setAttribute("value", project.id);
 
+      // select current project
+      if (project.id === this.selectedProject.id) {
+        option.setAttribute("selected", "");
+      }
+
+      projectSelect.appendChild(option);
+    }
     // Todo content
     // status
     dueDate.setAttribute("value", task.dueDate);
@@ -366,7 +381,12 @@ class ScreenController {
     this.elementAddClass(header, "dialog-header");
     this.elementAddClass(taskTitle, "h4");
     this.elementAddClass(btnContainer, "button-group");
-    this.elementAddClass(statusDateGroup, "input-status-date");
+    this.elementAddClass(statusDateGroup, "input-group");
+    this.elementAddClass(
+      statusDateGroupLeft,
+      "input-group-left input-status-date"
+    );
+    this.elementAddClass(statusDateGroupRight, "input-group-right");
     this.elementAddClass(titlePrioGroup, "input-group");
     this.elementAddClass(titlePrioGroupLeft, "input-group-left");
     this.elementAddClass(titlePrioGroupRight, "input-group-right");
@@ -395,6 +415,7 @@ class ScreenController {
       taskTitle,
       taskDesc,
       select,
+      projectSelect,
     };
     this.bindEventsTaskForm(
       deleteBtn,
@@ -415,8 +436,11 @@ class ScreenController {
     btnContainer.appendChild(confirmBtn);
     header.appendChild(title);
     header.appendChild(btnContainer);
-    statusDateGroup.appendChild(statusIcon);
-    statusDateGroup.appendChild(dueDate);
+    statusDateGroupLeft.appendChild(statusIcon);
+    statusDateGroupLeft.appendChild(dueDate);
+    statusDateGroupRight.appendChild(projectSelect);
+    statusDateGroup.appendChild(statusDateGroupLeft);
+    statusDateGroup.appendChild(statusDateGroupRight);
     titlePrioGroupLeft.appendChild(taskTitle);
     prioLabel.appendChild(prioIcon);
     titlePrioGroupRight.appendChild(prioLabel);
@@ -448,12 +472,7 @@ class ScreenController {
     );
     cancelBtn.addEventListener("click", (event) => this.closeTaskDialog(event));
     confirmBtn.addEventListener("click", (event) =>
-      this.updateSelectedTask(event, task, {
-        dueDate: inputs.dueDate.value,
-        title: inputs.taskTitle.value,
-        desc: inputs.taskDesc.value,
-        priority: inputs.select.value,
-      })
+      this.updateSelectedTask(event, task, this.parseTaskFormInputs(inputs))
     );
   }
 
@@ -474,17 +493,27 @@ class ScreenController {
 
   updateSelectedTask(event, task, values) {
     event.preventDefault();
-
+    
     task.updateTask(values);
-    this.renderProjectSection();
-    this.renderTaskSection();
+    const choosenProject = this.todoApp.getProject(values.projectId);
+    this.selectProject(choosenProject);
+    this.selectTask(task);
 
     this.dialogForm.close();
   }
 
+  parseTaskFormInputs(inputs) {
+    return {
+      dueDate: inputs.dueDate.value,
+      title: inputs.taskTitle.value,
+      desc: inputs.taskDesc.value,
+      priority: parseInt(inputs.select.value),
+      projectId: parseInt(inputs.projectSelect.value),
+    };
+  }
   createTaskForm(event) {
     const newTask = this.todoApp.createTodo();
-    newTask.assignToProject(this.selectedProject.getId());
+    newTask.assignToProject(this.selectedProject.id);
 
     this.selectTask(newTask);
     this.buildTaskForm(newTask, ScreenController.CREATE_TASK);
