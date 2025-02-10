@@ -43,6 +43,7 @@ export class Task {
     this.desc = values.desc;
     this.dueDate = values.dueDate;
     this.priority = values.priority;
+    this.assignToProject(values.projectId);
   }
 
   // settters
