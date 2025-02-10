@@ -18,7 +18,12 @@ export class Task {
     this.projectId = projectId;
     this.checklist = checklist || [];
 
-    this.taskId = Task.#id;
+    Task.#assignTaskId(this);
+  }
+
+  static #assignTaskId(task) {
+    task.#taskId = Task.#id;
+    Task.#id++;
   }
 
   assignToProject(projectId) {
@@ -42,21 +47,16 @@ export class Task {
 
   // settters
   set dueDate(date) {
-    const isoDate = parseISO(date);
-    this.#dueDate = format(isoDate || Date(Date.now()), "yyyy-MM-dd");
+    const isoDate = parseISO(date || new Date(Date.now()).toISOString());
+    this.#dueDate = format(isoDate, "yyyy-MM-dd");
   }
 
   set priority(value) {
-    if (value > Task.priority.length - 1 || value < 0) {
-      this.#priority = Task.DEFAULT_PRIO;
-    } else {
+    if (value && value >= 0 && value < Task.priority.length) {
       this.#priority = value;
+    } else {
+      this.#priority = Task.DEFAULT_PRIO;
     }
-  }
-
-  set taskId(id) {
-    this.#taskId = id;
-    Task.#id++;
   }
 
   set projectId(id) {
