@@ -92,6 +92,7 @@ class ScreenController {
     date.textContent = task.dueDate;
     title.textContent = task.title;
     desc.textContent = task.desc;
+
     priorityIcon.textContent = task.priority;
 
     this.elementAddClass(header, "task-header");
@@ -100,6 +101,13 @@ class ScreenController {
     this.elementAddClass(dateWrapper, "task-date");
     this.elementAddClass(titleWrapper, "task-title");
     this.elementAddClass(desc, "task-desc");
+
+    this.assignCheckBoxStatusClasses(task, checkBox);
+    //events
+    editIcon.addEventListener("click", () => this.buildTaskForm(task));
+    checkBox.addEventListener("click", (event) =>
+      this.switchTaskStatus(event, task)
+    );
 
     dateWrapper.appendChild(date);
     checkDate.appendChild(checkBox);
@@ -111,8 +119,6 @@ class ScreenController {
     header.appendChild(controls);
     header.appendChild(titleWrapper);
     content.appendChild(desc);
-
-    editIcon.addEventListener("click", () => this.buildTaskForm(task));
 
     this.taskSection.appendChild(header);
     this.taskSection.appendChild(content);
@@ -190,7 +196,7 @@ class ScreenController {
       const checkBoxIcon = this.createElement(
         "i",
         "",
-        "fi fi-rr-square clickable-icon check-box"
+        "fi clickable-icon check-box"
       );
       const taskTitle = this.doc.createElement("a");
       const taskPriority = this.doc.createElement("a");
@@ -201,16 +207,20 @@ class ScreenController {
       );
 
       taskTitle.textContent = task.title;
-      taskTitle.textContent = task.title;
       date.textContent = task.dueDate;
 
       itemContainer.classList.add("main-item");
       desc.classList.add("main-item-desc");
       dateContainer.classList.add("main-item-date");
       checkBoxLink.classList.add("check-box-link");
+      this.assignCheckBoxStatusClasses(task, checkBoxIcon);
+      this.assignTitleStatusClasses(task, taskTitle);
 
-      // event
+      // events
       editIcon.addEventListener("click", () => this.buildProjectForm(list));
+      checkBoxLink.addEventListener("click", (event) =>
+        this.switchTaskStatus(event, task)
+      );
 
       checkBoxLink.appendChild(checkBoxIcon);
       taskPriority.appendChild(priorityIcon);
@@ -312,6 +322,7 @@ class ScreenController {
   showtaskForm(task) {
     this.taskForm.showModal();
   }
+
   showProjectForm() {
     this.projectForm.showModal();
   }
@@ -603,6 +614,32 @@ class ScreenController {
     this.buildTaskForm(newTask, ScreenController.FORM_CREATE_MODE);
   }
 
+  switchTaskStatus(event, task) {
+    event.stopPropagation();
+
+    task.switchStatus();
+    this.renderProjectSection();
+    this.renderTaskSection();
+  }
+
+  assignCheckBoxStatusClasses(task, checkBox) {
+    if (task.status === Task.STATUS_COMPLETE) {
+      checkBox.classList.remove("fi-rr-square");
+      checkBox.classList.add("fi-sr-checkbox");
+    } else {
+      checkBox.classList.remove("fi-sr-checkbox");
+      checkBox.classList.add("fi-rr-square");
+    }
+  }
+
+  assignTitleStatusClasses(task, title) {
+    if (task.status === Task.STATUS_COMPLETE) {
+      title.classList.add("item-task-complete");
+    } else {
+      title.classList.remove("item-task-complete");
+    }
+  }
+
   // Project Events
   bindEventsProjectForm(deleteBtn, cancelBtn, confirmBtn, project, inputs) {
     deleteBtn.addEventListener("click", (event) =>
@@ -667,6 +704,14 @@ class ScreenController {
     }
   }
 
+  elementDeleteClass(elem, classes) {
+    if (!classes) return;
+
+    const classNames = classes.split(" ");
+    for (const className of classNames) {
+      if (className) elem.classList.remove(className);
+    }
+  }
   createElement(tag, content, classes) {
     const elem = this.doc.createElement(tag);
     elem.textContent = content;

@@ -4,6 +4,8 @@ export class Task {
   static priority = ["None", "Low", "Medium", "High"];
   static DEFAULT_PROJECT = 0;
   static DEFAULT_PRIO = 0;
+  static STATUS_PENDING = 0;
+  static STATUS_COMPLETE = 1;
   #projectId;
   #taskId;
   #dueDate;
@@ -32,6 +34,10 @@ export class Task {
 
   markComplete() {
     this.status = 1;
+  }
+
+  switchStatus() {
+    this.status = this.status === 1 ? 0 : 1;
   }
 
   changePriority(priority) {
