@@ -349,12 +349,11 @@ dialog {
 }
 
 #dialog-form,
-#dialog-form2 {
+#project-form {
   min-width: min(50vw, 1000px);
-  /* min-height: min(60vh, 1000px); */
 }
 #dialog-form > form,
-#dialog-form2 > form {
+#project-form > form {
   display: flex;
   flex-direction: column;
   gap: var(--space-3x);
@@ -364,8 +363,6 @@ dialog {
 
 .dialog-header {
   color: var(--text-400);
-}
-.dialog-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -418,6 +415,11 @@ input#dueDate {
   background-color: var(--background);
   color: var(--primary-600);
   width: 130px;
+  cursor: pointer;
+}
+
+input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
 }
 
 .input-group {
