@@ -39,7 +39,7 @@ export class Task {
   }
 
   updateTask(values) {
-    this.title = values.title;
+    this.title = values.title || "Task";
     this.desc = values.desc;
     this.dueDate = values.dueDate;
     this.priority = values.priority;

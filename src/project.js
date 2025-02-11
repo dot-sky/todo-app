@@ -13,7 +13,7 @@ export class Project {
     Project.#id++;
   }
   update(values) {
-    this.name = values.name;
+    this.name = values.name || "Project";
     this.desc = values.desc;
   }
   // getters
