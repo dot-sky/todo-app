@@ -13,7 +13,7 @@ class ScreenController {
 
   constructor(doc) {
     this.doc = doc;
-    this.todoApp = new TodoApp();
+    this.todoApp = new TodoApp("Derek");
 
     this.todoApp.loadData();
     this.cacheDOM();
@@ -23,12 +23,12 @@ class ScreenController {
     this.asideSection = this.doc.querySelector(".side-bar-section");
     this.mainSection = this.doc.querySelector(".main-section");
     this.taskSection = this.doc.querySelector(".task-section");
-    this.dialogForm = this.doc.querySelector("#dialog-form");
+    this.taskForm = this.doc.querySelector("#task-form");
     this.projectForm = this.doc.querySelector("#project-form");
   }
 
   updateWindow() {
-    this.populateSideBarSection();
+    this.displaySideBarSection();
     this.selectProject(this.todoApp.getProject(1));
     this.selectTask(this.todoApp.getTask(4));
     // this.projectForm.showModal();
@@ -232,10 +232,10 @@ class ScreenController {
   }
 
   // Sidebar
-  populateSideBarSection() {
+  displaySideBarSection() {
     const appSection = this.doc.createElement("div");
     const userSection = this.doc.createElement("div");
-    userSection.textContent = "Derek";
+    userSection.textContent = this.todoApp.getUser();
 
     // Tasks
     const tasksMenu = this.doc.createElement("div");
@@ -309,13 +309,14 @@ class ScreenController {
     this.asideSection.appendChild(projectsMenu);
   }
 
-  showDialogForm(task) {
-    this.dialogForm.showModal();
+  showtaskForm(task) {
+    this.taskForm.showModal();
   }
   showProjectForm() {
     this.projectForm.showModal();
   }
 
+  // Dialogs
   buildProjectForm(project, formMode) {
     this.projectForm.textContent = "";
 
@@ -391,7 +392,7 @@ class ScreenController {
   }
 
   buildTaskForm(task, formMode) {
-    this.dialogForm.textContent = "";
+    this.taskForm.textContent = "";
 
     const form = this.doc.createElement("form");
     const header = this.doc.createElement("div");
@@ -535,8 +536,8 @@ class ScreenController {
     form.appendChild(statusDateGroup);
     form.appendChild(titlePrioGroup);
     form.appendChild(descContainer);
-    this.dialogForm.appendChild(form);
-    this.showDialogForm();
+    this.taskForm.appendChild(form);
+    this.showtaskForm();
   }
 
   // General
@@ -565,12 +566,12 @@ class ScreenController {
     this.renderProjectSection();
     this.selectTask(null);
 
-    this.dialogForm.close();
+    this.taskForm.close();
   }
 
   closeTaskDialog(event) {
     event.preventDefault();
-    this.dialogForm.close();
+    this.taskForm.close();
   }
 
   updateSelectedTask(event, task, values) {
@@ -581,7 +582,7 @@ class ScreenController {
     this.selectProject(choosenProject);
     this.selectTask(task);
 
-    this.dialogForm.close();
+    this.taskForm.close();
   }
 
   parseTaskFormInputs(inputs) {
@@ -603,7 +604,6 @@ class ScreenController {
   }
 
   // Project Events
-
   bindEventsProjectForm(deleteBtn, cancelBtn, confirmBtn, project, inputs) {
     deleteBtn.addEventListener("click", (event) =>
       this.deleteSelectedProject(event, project)
@@ -624,7 +624,7 @@ class ScreenController {
     event.preventDefault();
 
     this.todoApp.deleteProjectWithTasks(project.id);
-    this.populateSideBarSection();
+    this.displaySideBarSection();
     this.selectProject(null);
 
     this.projectForm.close();
@@ -639,7 +639,7 @@ class ScreenController {
     event.preventDefault();
 
     project.update(values);
-    this.populateSideBarSection();
+    this.displaySideBarSection();
     this.renderProjectSection();
 
     this.projectForm.close();

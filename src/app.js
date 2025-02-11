@@ -10,7 +10,7 @@ export function TodoApp() {
   const projectMenu = { title: "Projects" };
 
   const initApp = (name) => {
-    user = name;
+    user = name || "";
     // add default project
     const defaultProject = new Project(
       "Personal",
@@ -19,7 +19,7 @@ export function TodoApp() {
     projects.push(defaultProject);
     DEFAULT_PROJECT_ID = defaultProject.id;
   };
-
+  const getUser = () => user;
   const getTaskMenu = () => taskMenu;
   const getProjectMenu = () => projectMenu;
 
@@ -159,7 +159,7 @@ export function TodoApp() {
   };
 
   const loadData = () => {
-    initApp("user");
+    initApp("Derek");
     createTodo(
       "Grocery Shopping",
       "Buy vegetables, fruits, milk, and other household essentials.",
@@ -258,6 +258,7 @@ export function TodoApp() {
     initApp,
     createTodo,
     showTasks,
+    getUser,
     getTaskByIndex,
     getTask,
     getTaskMenu,
