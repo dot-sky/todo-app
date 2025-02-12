@@ -45,6 +45,7 @@ export class Task {
   }
 
   updateTask(values) {
+    this.status = values.status || 0;
     this.title = values.title || "Task";
     this.desc = values.desc;
     this.dueDate = values.dueDate;
