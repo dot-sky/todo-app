@@ -203,11 +203,11 @@ small {
   align-items: center;
   padding: 0px;
   border-radius: 0px;
-  color: var(--text-500);
+  color: var(--text-300);
 }
 
 .check-box:hover {
-  color: var(--text-800);
+  color: var(--text-600);
 }
 
 .edit-icon {
@@ -280,6 +280,7 @@ a {
   align-items: center;
   padding: var(--space-2x);
   border-radius: var(--space-1x);
+  border-bottom: 1px inset;
 }
 
 .main-item:hover {
@@ -304,6 +305,10 @@ a {
   font-size: var(--icon-size-sm);
   margin: 0px var(--space-1x);
   color: var(--success);
+}
+
+.item-task-complete {
+  color: var(--text-400);
 }
 
 /* Task section */
@@ -348,11 +353,11 @@ dialog {
   padding: var(--space-4x);
 }
 
-#dialog-form,
+#task-form,
 #project-form {
   min-width: min(50vw, 1000px);
 }
-#dialog-form > form,
+#task-form > form,
 #project-form > form {
   display: flex;
   flex-direction: column;
