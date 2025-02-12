@@ -102,7 +102,7 @@ class ScreenController {
     this.elementAddClass(titleWrapper, "task-title");
     this.elementAddClass(desc, "task-desc");
 
-    this.assignCheckBoxStatusClasses(task, checkBox);
+    this.assignStatusIconClasses(task, checkBox);
     //events
     editIcon.addEventListener("click", () => this.buildTaskForm(task));
     checkBox.addEventListener("click", (event) =>
@@ -213,7 +213,7 @@ class ScreenController {
       desc.classList.add("main-item-desc");
       dateContainer.classList.add("main-item-date");
       checkBoxLink.classList.add("check-box-link");
-      this.assignCheckBoxStatusClasses(task, checkBoxIcon);
+      this.assignStatusIconClasses(task, checkBoxIcon);
       this.assignTitleStatusClasses(task, taskTitle);
 
       // events
@@ -425,8 +425,9 @@ class ScreenController {
     const statusIcon = this.createElement(
       "i",
       "",
-      "fi fi-rr-square clickable-icon check-box"
+      "fi clickable-icon check-box"
     );
+    const status = this.createInputElement("number", "status", "hidden");
     const dueDate = this.createInputElement("date", "dueDate");
     const projectSelect = this.doc.createElement("select");
     const titlePrioGroup = this.doc.createElement("div");
@@ -466,7 +467,7 @@ class ScreenController {
       projectSelect.appendChild(option);
     }
     // Todo content
-    // status
+    status.setAttribute("value", task.status);
     dueDate.setAttribute("value", task.dueDate);
     taskTitle.setAttribute("value", task.title);
     taskDesc.textContent = task.desc;
@@ -485,6 +486,7 @@ class ScreenController {
     this.elementAddClass(titlePrioGroupLeft, "input-group-left");
     this.elementAddClass(titlePrioGroupRight, "input-group-right");
     this.elementAddClass(descContainer, "desc-area");
+    this.assignStatusIconClasses(task, statusIcon);
 
     deleteBtn.setAttribute("id", "delete");
     cancelBtn.setAttribute("id", "cancel");
@@ -505,6 +507,7 @@ class ScreenController {
 
     // events
     const formInputs = {
+      status,
       dueDate,
       taskTitle,
       taskDesc,
@@ -515,6 +518,7 @@ class ScreenController {
       deleteBtn,
       cancelBtn,
       confirmBtn,
+      statusIcon,
       task,
       formInputs,
       formMode
@@ -531,6 +535,7 @@ class ScreenController {
     header.appendChild(title);
     header.appendChild(btnContainer);
     statusDateGroupLeft.appendChild(statusIcon);
+    statusDateGroupLeft.appendChild(status);
     statusDateGroupLeft.appendChild(dueDate);
     statusDateGroupRight.appendChild(projectSelect);
     statusDateGroup.appendChild(statusDateGroupLeft);
@@ -560,13 +565,23 @@ class ScreenController {
   }
 
   // Task Events
-  bindEventsTaskForm(deleteBtn, cancelBtn, confirmBtn, task, inputs) {
+  bindEventsTaskForm(
+    deleteBtn,
+    cancelBtn,
+    confirmBtn,
+    statusIcon,
+    task,
+    inputs
+  ) {
     deleteBtn.addEventListener("click", (event) =>
       this.deleteSelectedTask(event, task)
     );
     cancelBtn.addEventListener("click", (event) => this.closeTaskDialog(event));
     confirmBtn.addEventListener("click", (event) =>
       this.updateSelectedTask(event, task, this.parseTaskFormInputs(inputs))
+    );
+    statusIcon.addEventListener("click", (event) =>
+      this.switchTaskStatusForm(event.target, inputs.status)
     );
   }
 
@@ -598,6 +613,7 @@ class ScreenController {
 
   parseTaskFormInputs(inputs) {
     return {
+      status: parseInt(inputs.status.value),
       dueDate: inputs.dueDate.value,
       title: inputs.taskTitle.value,
       desc: inputs.taskDesc.value,
@@ -621,8 +637,23 @@ class ScreenController {
     this.renderProjectSection();
     this.renderTaskSection();
   }
+  switchTaskStatusForm(checkbox, statusInput) {
+    const status = parseInt(statusInput.value) || 0;
+    statusInput.value = status === 0 ? 1 : 0;
+    this.assignStatusIconClassesForm(parseInt(statusInput.value), checkbox);
+  }
 
-  assignCheckBoxStatusClasses(task, checkBox) {
+  assignStatusIconClassesForm(status, checkBox) {
+    if (status === Task.STATUS_COMPLETE) {
+      checkBox.classList.remove("fi-rr-square");
+      checkBox.classList.add("fi-sr-checkbox");
+    } else {
+      checkBox.classList.remove("fi-sr-checkbox");
+      checkBox.classList.add("fi-rr-square");
+    }
+  }
+
+  assignStatusIconClasses(task, checkBox) {
     if (task.status === Task.STATUS_COMPLETE) {
       checkBox.classList.remove("fi-rr-square");
       checkBox.classList.add("fi-sr-checkbox");
