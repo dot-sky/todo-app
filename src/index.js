@@ -85,15 +85,13 @@ class ScreenController {
     const priorityIcon = this.createElement(
       "i",
       "",
-      "fi fi-rr-flag-alt icon priority-icon"
+      "fi fi-sr-flag-alt icon priority-icon"
     );
 
     //task content
     date.textContent = task.dueDate;
     title.textContent = task.title;
     desc.textContent = task.desc;
-
-    priorityIcon.textContent = task.priority;
 
     this.elementAddClass(header, "task-header");
     this.elementAddClass(controls, "task-controls");
@@ -102,7 +100,9 @@ class ScreenController {
     this.elementAddClass(titleWrapper, "task-title");
     this.elementAddClass(desc, "task-desc");
 
+    this.assignPriorityClasses(task, priorityIcon);
     this.assignStatusIconClasses(task, checkBox);
+
     //events
     editIcon.addEventListener("click", () => this.buildTaskForm(task));
     checkBox.addEventListener("click", (event) =>
@@ -203,7 +203,7 @@ class ScreenController {
       const priorityIcon = this.createElement(
         "i",
         "",
-        "fi fi-rr-flag-alt icon priority-icon"
+        "fi fi-sr-flag-alt icon priority-icon"
       );
 
       taskTitle.textContent = task.title;
@@ -215,7 +215,7 @@ class ScreenController {
       checkBoxLink.classList.add("check-box-link");
       this.assignStatusIconClasses(task, checkBoxIcon);
       this.assignTitleStatusClasses(task, taskTitle);
-
+      this.assignPriorityClasses(task, priorityIcon, "mainSection");
       // events
       editIcon.addEventListener("click", () => this.buildProjectForm(list));
       checkBoxLink.addEventListener("click", (event) =>
@@ -435,12 +435,12 @@ class ScreenController {
     const titlePrioGroupRight = this.doc.createElement("div");
     const taskTitle = this.createInputElement("text", "title", "h4");
     const prioLabel = this.doc.createElement("label");
-    const prioIcon = this.createElement(
+    const priorityIcon = this.createElement(
       "i",
       "",
-      "fi fi-rr-flag-alt icon priority-icon'"
+      "fi fi-sr-flag-alt icon priority-icon"
     );
-    const select = this.doc.createElement("select");
+    const prioritySelect = this.doc.createElement("select");
     const descContainer = this.doc.createElement("div");
     const taskDesc = this.doc.createElement("textarea");
 
@@ -450,7 +450,7 @@ class ScreenController {
       const option = this.doc.createElement("option");
       option.textContent = Task.priority[i];
       option.setAttribute("value", i);
-      select.appendChild(option);
+      prioritySelect.appendChild(option);
       options.push(option);
     }
     // adding project options
@@ -487,6 +487,7 @@ class ScreenController {
     this.elementAddClass(titlePrioGroupRight, "input-group-right");
     this.elementAddClass(descContainer, "desc-area");
     this.assignStatusIconClasses(task, statusIcon);
+    this.assignPriorityClasses(task, priorityIcon);
 
     deleteBtn.setAttribute("id", "delete");
     cancelBtn.setAttribute("id", "cancel");
@@ -494,8 +495,8 @@ class ScreenController {
     confirmBtn.setAttribute("id", "confirm");
     taskTitle.setAttribute("placeholder", "Todo Title");
     taskTitle.setAttribute("for", "priority");
-    select.setAttribute("name", "priority");
-    select.setAttribute("id", "priority");
+    prioritySelect.setAttribute("name", "priority");
+    prioritySelect.setAttribute("id", "priority");
     taskDesc.setAttribute("id", "desc");
     taskDesc.setAttribute("name", "desc");
     taskDesc.setAttribute(
@@ -511,7 +512,7 @@ class ScreenController {
       dueDate,
       taskTitle,
       taskDesc,
-      select,
+      prioritySelect,
       projectSelect,
     };
     this.bindEventsTaskForm(
@@ -519,6 +520,7 @@ class ScreenController {
       cancelBtn,
       confirmBtn,
       statusIcon,
+      priorityIcon,
       task,
       formInputs,
       formMode
@@ -541,9 +543,9 @@ class ScreenController {
     statusDateGroup.appendChild(statusDateGroupLeft);
     statusDateGroup.appendChild(statusDateGroupRight);
     titlePrioGroupLeft.appendChild(taskTitle);
-    prioLabel.appendChild(prioIcon);
+    prioLabel.appendChild(priorityIcon);
     titlePrioGroupRight.appendChild(prioLabel);
-    titlePrioGroupRight.appendChild(select);
+    titlePrioGroupRight.appendChild(prioritySelect);
     titlePrioGroup.appendChild(titlePrioGroupLeft);
     titlePrioGroup.appendChild(titlePrioGroupRight);
     descContainer.appendChild(taskDesc);
@@ -570,6 +572,7 @@ class ScreenController {
     cancelBtn,
     confirmBtn,
     statusIcon,
+    priorityIcon,
     task,
     inputs
   ) {
@@ -582,6 +585,9 @@ class ScreenController {
     );
     statusIcon.addEventListener("click", (event) =>
       this.switchTaskStatusForm(event.target, inputs.status)
+    );
+    inputs.prioritySelect.addEventListener("change", (event) =>
+      this.switchTaskPriorityForm(event.target, priorityIcon)
     );
   }
 
@@ -617,7 +623,7 @@ class ScreenController {
       dueDate: inputs.dueDate.value,
       title: inputs.taskTitle.value,
       desc: inputs.taskDesc.value,
-      priority: parseInt(inputs.select.value),
+      priority: parseInt(inputs.prioritySelect.value),
       projectId: parseInt(inputs.projectSelect.value),
     };
   }
@@ -637,10 +643,17 @@ class ScreenController {
     this.renderProjectSection();
     this.renderTaskSection();
   }
+
   switchTaskStatusForm(checkbox, statusInput) {
     const status = parseInt(statusInput.value) || 0;
     statusInput.value = status === 0 ? 1 : 0;
     this.assignStatusIconClassesForm(parseInt(statusInput.value), checkbox);
+  }
+
+  switchTaskPriorityForm(priorityInput, icon) {
+    const priority = parseInt(priorityInput.value) || 0;
+    this.elementDeleteClassSubstr(icon, "-priority");
+    this.assignPriorityClasses({ priority }, icon);
   }
 
   assignStatusIconClassesForm(status, checkBox) {
@@ -668,6 +681,31 @@ class ScreenController {
       title.classList.add("item-task-complete");
     } else {
       title.classList.remove("item-task-complete");
+    }
+  }
+
+  elementDeleteClassSubstr(element, substr) {
+    for (const className of element.classList) {
+      if (className.includes(substr)) {
+        this.elementDeleteClass(element, className);
+      }
+    }
+  }
+  assignPriorityClasses(task, icon, section) {
+    if (
+      section === "mainSection" &&
+      (task.priority === Task.DEFAULT_PRIORITY ||
+        task.status === Task.STATUS_COMPLETE)
+    ) {
+      this.elementAddClass(icon, "invisible");
+    } else if (task.priority === Task.HIGH_PRIORITY) {
+      this.elementAddClass(icon, "high-priority");
+    } else if (task.priority === Task.MEDIUM_PRIORITY) {
+      this.elementAddClass(icon, "medium-priority");
+    } else if (task.priority === Task.LOW_PRIORITY) {
+      this.elementAddClass(icon, "low-priority");
+    } else {
+      this.elementAddClass(icon, "default-priority");
     }
   }
 

@@ -3,7 +3,10 @@ export class Task {
   static #id = 0;
   static priority = ["None", "Low", "Medium", "High"];
   static DEFAULT_PROJECT = 0;
-  static DEFAULT_PRIO = 0;
+  static DEFAULT_PRIORITY = 0;
+  static LOW_PRIORITY = 1;
+  static MEDIUM_PRIORITY = 2;
+  static HIGH_PRIORITY = 3;
   static STATUS_PENDING = 0;
   static STATUS_COMPLETE = 1;
   #projectId;
@@ -60,10 +63,10 @@ export class Task {
   }
 
   set priority(value) {
-    if (value && value >= 0 && value < Task.priority.length) {
+    if (value && value > 0 && value < Task.priority.length) {
       this.#priority = value;
     } else {
-      this.#priority = Task.DEFAULT_PRIO;
+      this.#priority = Task.DEFAULT_PRIORITY;
     }
   }
 

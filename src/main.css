@@ -12,7 +12,7 @@
   --secondary: #fff9d0;
   --accent: #a0deff;
   --danger: #df6873;
-  --warning: #f0e56a;
+  --warning: #f0e56a; /*f0e56a  ebdb2b*/
   --success: #6cc66f;
 
   --text-50: #f2f2f3;
@@ -177,6 +177,10 @@ small {
   display: none;
 }
 
+.invisible {
+  visibility: hidden;
+}
+
 .icon {
   display: flex;
   align-items: center;
@@ -217,6 +221,22 @@ small {
 
 .edit-icon:hover {
   color: var(--text-500);
+}
+
+.default-priority {
+  color: var(--text-300);
+}
+
+.low-priority {
+  color: var(--success);
+}
+
+.medium-priority {
+  color: var(--warning);
+}
+
+.high-priority {
+  color: var(--danger);
 }
 
 /* Main container */
@@ -304,7 +324,6 @@ a {
 .main-item-desc .priority-icon {
   font-size: var(--icon-size-sm);
   margin: 0px var(--space-1x);
-  color: var(--success);
 }
 
 .item-task-complete {
