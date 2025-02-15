@@ -13,9 +13,9 @@ class ScreenController {
 
   constructor(doc) {
     this.doc = doc;
-    this.todoApp = new TodoApp("Derek");
+    this.todoApp = new TodoApp(this.doc);
+    this.todoApp.init();
 
-    this.todoApp.loadData();
     this.cacheDOM();
   }
 
@@ -31,7 +31,6 @@ class ScreenController {
     this.displaySideBarSection();
     this.selectProject(this.todoApp.getProject(1));
     this.selectTask(this.todoApp.getTask(4));
-    // this.projectForm.showModal();
   }
 
   // Tasks
@@ -214,10 +213,9 @@ class ScreenController {
       dateContainer.classList.add("main-item-date");
       checkBoxLink.classList.add("check-box-link");
       this.assignStatusIconClasses(task, checkBoxIcon);
-      this.assignTitleStatusClasses(task, taskTitle);
+      this.assignTitleStatusClasses(task, taskTitle, date);
       this.assignPriorityClasses(task, priorityIcon, "mainSection");
       // events
-      editIcon.addEventListener("click", () => this.buildProjectForm(list));
       checkBoxLink.addEventListener("click", (event) =>
         this.switchTaskStatus(event, task)
       );
@@ -236,6 +234,8 @@ class ScreenController {
       itemContainer.addEventListener("click", () => this.selectTask(task));
       mainList.appendChild(itemContainer);
     }
+    // project Events
+    editIcon.addEventListener("click", () => this.buildProjectForm(list));
 
     this.mainSection.appendChild(header);
     this.mainSection.appendChild(mainList);
@@ -490,7 +490,9 @@ class ScreenController {
     this.assignPriorityClasses(task, priorityIcon);
 
     deleteBtn.setAttribute("id", "delete");
+    deleteBtn.setAttribute("type", "button");
     cancelBtn.setAttribute("id", "cancel");
+    cancelBtn.setAttribute("type", "button");
     confirmBtn.setAttribute("type", "submit");
     confirmBtn.setAttribute("id", "confirm");
     taskTitle.setAttribute("placeholder", "Todo Title");
@@ -505,6 +507,7 @@ class ScreenController {
     );
     taskDesc.setAttribute("rows", "15");
     taskDesc.setAttribute("cols", "32");
+    confirmBtn.focus();
 
     // events
     const formInputs = {
@@ -593,7 +596,7 @@ class ScreenController {
 
   deleteSelectedTask(event, task) {
     event.preventDefault();
-
+    console.log("Deleting...");
     this.todoApp.deleteTask(task.taskId);
     this.renderProjectSection();
     this.selectTask(null);
@@ -609,7 +612,7 @@ class ScreenController {
   updateSelectedTask(event, task, values) {
     event.preventDefault();
 
-    task.updateTask(values);
+    this.todoApp.updateTask(task, values);
     const choosenProject = this.todoApp.getProject(values.projectId);
     this.selectProject(choosenProject);
     this.selectTask(task);
@@ -639,7 +642,7 @@ class ScreenController {
   switchTaskStatus(event, task) {
     event.stopPropagation();
 
-    task.switchStatus();
+    this.todoApp.switchTaskStatus(task);
     this.renderProjectSection();
     this.renderTaskSection();
   }
@@ -676,21 +679,16 @@ class ScreenController {
     }
   }
 
-  assignTitleStatusClasses(task, title) {
+  assignTitleStatusClasses(task, title, date) {
     if (task.status === Task.STATUS_COMPLETE) {
       title.classList.add("item-task-complete");
+      date.classList.add("item-task-complete");
     } else {
       title.classList.remove("item-task-complete");
+      date.classList.remove("item-task-complete");
     }
   }
 
-  elementDeleteClassSubstr(element, substr) {
-    for (const className of element.classList) {
-      if (className.includes(substr)) {
-        this.elementDeleteClass(element, className);
-      }
-    }
-  }
   assignPriorityClasses(task, icon, section) {
     if (
       section === "mainSection" &&
@@ -744,7 +742,7 @@ class ScreenController {
   updateSelectedProject(event, project, values) {
     event.preventDefault();
 
-    project.update(values);
+    this.todoApp.updateProject(project, values);
     this.displaySideBarSection();
     this.renderProjectSection();
 
@@ -781,6 +779,15 @@ class ScreenController {
       if (className) elem.classList.remove(className);
     }
   }
+
+  elementDeleteClassSubstr(element, substr) {
+    for (const className of element.classList) {
+      if (className.includes(substr)) {
+        this.elementDeleteClass(element, className);
+      }
+    }
+  }
+
   createElement(tag, content, classes) {
     const elem = this.doc.createElement(tag);
     elem.textContent = content;

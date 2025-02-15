@@ -99,4 +99,43 @@ export class Task {
   logSummary() {
     console.log(` - ${this.#taskId} ${this.title} - ${this.dueDate}`);
   }
+
+  // storage
+  restoreObject(values) {
+    Task.#decreaseTaskId(); // original task id can be reused
+    this.#taskId = values.taskId;
+
+    this.status = values.status || 0;
+    this.title = values.title || "Task";
+    this.desc = values.desc;
+    this.dueDate = values.dueDate;
+    this.priority = values.priority;
+    this.assignToProject(values.projectId);
+  }
+
+  static #decreaseTaskId() {
+    Task.#id--;
+  }
+
+  static nextId() {
+    return Task.#id;
+  }
+
+  static setNextId(id) {
+    Task.#id = id;
+  }
+
+  stringify() {
+    const values = {
+      taskId: this.taskId,
+      title: this.title,
+      desc: this.desc,
+      dueDate: this.dueDate,
+      priority: this.priority,
+      status: this.status,
+      projectId: this.projectId,
+      checklist: this.checklist,
+    };
+    return JSON.stringify(values);
+  }
 }
