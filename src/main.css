@@ -361,6 +361,7 @@ a {
 
 .task-desc {
   color: var(--text-600);
+  white-space: pre-wrap;
 }
 
 /* Dialog */
