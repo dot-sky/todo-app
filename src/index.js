@@ -29,8 +29,8 @@ class ScreenController {
 
   updateWindow() {
     this.displaySideBarSection();
-    this.selectProject(this.todoApp.getProject(1));
-    this.selectTask(this.todoApp.getTask(4));
+    this.selectProject(this.todoApp.getProject(0));
+    this.selectTask(this.todoApp.getProjectTasks(0)[1]);
   }
 
   // Tasks
@@ -48,6 +48,7 @@ class ScreenController {
 
   selectTask(task) {
     this.selectedTask = task;
+    this.renderProjectSection();
     this.renderTaskSection();
   }
 
@@ -79,7 +80,7 @@ class ScreenController {
     const editIcon = this.createElement(
       "i",
       "",
-      "fi fi-rr-edit clickable-icon edit-icon"
+      "fi fi-rr-pen-square clickable-icon edit-icon"
     );
     const priorityIcon = this.createElement(
       "i",
@@ -139,6 +140,7 @@ class ScreenController {
   selectProject(value) {
     this.selectedProject = value;
     this.selectedTask = null;
+    this.displaySideBarSection();
     this.renderProjectSection();
     this.renderTaskSection();
   }
@@ -165,7 +167,7 @@ class ScreenController {
     const editIcon = this.createElement(
       "i",
       "",
-      "fi fi-rr-edit clickable-icon edit-icon"
+      "fi fi-rr-pen-square clickable-icon edit-icon"
     );
     const headerDesc = this.doc.createElement("div");
     const descText = this.doc.createElement("p");
@@ -215,10 +217,10 @@ class ScreenController {
       this.assignStatusIconClasses(task, checkBoxIcon);
       this.assignTitleStatusClasses(task, taskTitle, date);
       this.assignPriorityClasses(task, priorityIcon, "mainSection");
-      // events
-      checkBoxLink.addEventListener("click", (event) =>
-        this.switchTaskStatus(event, task)
-      );
+
+      if (this.selectedTask && task.taskId === this.selectedTask.taskId) {
+        this.elementAddClass(itemContainer, "selected-task-element");
+      }
 
       checkBoxLink.appendChild(checkBoxIcon);
       taskPriority.appendChild(priorityIcon);
@@ -231,6 +233,10 @@ class ScreenController {
       itemContainer.appendChild(desc);
       itemContainer.appendChild(dateContainer);
 
+      // events
+      checkBoxLink.addEventListener("click", (event) =>
+        this.switchTaskStatus(event, task)
+      );
       itemContainer.addEventListener("click", () => this.selectTask(task));
       mainList.appendChild(itemContainer);
     }
@@ -249,50 +255,54 @@ class ScreenController {
 
     // Tasks
     const tasksMenu = this.doc.createElement("div");
-    const taskHeading = this.doc.createElement("div");
-    const taskTitle = this.doc.createElement("h5");
-    const addTaskIcon = this.doc.createElement("i");
-    const addTaskLink = this.doc.createElement("a");
-
-    taskTitle.textContent = this.todoApp.getTaskMenu().title;
+    const taskMenu = this.todoApp.getTaskMenu();
 
     const taskMenuList = this.doc.createElement("ul");
-    for (const item of this.todoApp.getTaskMenu().items) {
+    for (const [i, item] of this.todoApp.getTaskMenu().items.entries()) {
       const listItem = this.doc.createElement("li");
-      const itemLink = this.doc.createElement("a");
-      itemLink.textContent = item;
+      const listIcon = this.createElement("i", "", taskMenu.icons[i] + " icon");
+      const listText = this.createElement("span", item, "");
+      listItem.appendChild(listIcon);
+      listItem.appendChild(listText);
 
-      listItem.appendChild(itemLink);
+      if (i === 0) {
+        this.elementAddClass(listItem, "menu-highlight");
+        // create task event
+        listItem.addEventListener("click", () => this.createTaskForm());
+      }
       taskMenuList.appendChild(listItem);
     }
 
-    this.elementAddClass(addTaskIcon, "fi-rr-add clickable-icon icon");
-    taskHeading.classList.add("menu-segment-heading");
     taskMenuList.classList.add("menu-elements");
 
-    // Event
-    addTaskIcon.addEventListener("click", () => this.createTaskForm());
-
-    addTaskLink.appendChild(addTaskIcon);
-    taskHeading.appendChild(taskTitle);
-    taskHeading.appendChild(addTaskLink);
-
-    tasksMenu.appendChild(taskHeading);
     tasksMenu.appendChild(taskMenuList);
 
     // Projects
     const projectsMenu = this.doc.createElement("div");
+    const projectMenu = this.todoApp.getProjectMenu();
     const projectHeading = this.doc.createElement("div");
-    const projectTitle = this.doc.createElement("h5");
-    const addProjectIcon = this.doc.createElement("i");
-    const addProjectLink = this.doc.createElement("a");
-
-    projectTitle.textContent = this.todoApp.getProjectMenu().title;
+    const addProjectIcon = this.createElement(
+      "i",
+      "",
+      "fi fi-sr-square-plus icon"
+    );
+    const projectTitle = this.createElement("span", projectMenu.title, "");
 
     const projectMenuList = this.doc.createElement("ul");
     for (const project of this.todoApp.getAllProjects()) {
       const listItem = this.doc.createElement("li");
-      listItem.textContent = project.name;
+      const listIcon = this.createElement(
+        "i",
+        "",
+        projectMenu.icons[0] + " icon"
+      );
+      const listText = this.createElement("span", project.name, "");
+      if (this.selectedProject && project.id === this.selectedProject.id) {
+        this.elementAddClass(listItem, "selected-menu-element");
+      }
+
+      listItem.appendChild(listIcon);
+      listItem.appendChild(listText);
       listItem.addEventListener("click", () => this.selectProject(project));
 
       projectMenuList.appendChild(listItem);
@@ -303,12 +313,10 @@ class ScreenController {
     projectMenuList.classList.add("menu-elements");
 
     // Event
-    addProjectIcon.addEventListener("click", () => this.createProjectForm());
+    projectHeading.addEventListener("click", () => this.createProjectForm());
 
-    addProjectLink.appendChild(addProjectIcon);
+    projectHeading.appendChild(addProjectIcon);
     projectHeading.appendChild(projectTitle);
-    projectHeading.appendChild(addProjectLink);
-
     projectsMenu.appendChild(projectHeading);
     projectsMenu.appendChild(projectMenuList);
 
@@ -635,7 +643,7 @@ class ScreenController {
     const newTask = this.todoApp.createTodo();
     newTask.assignToProject(this.selectedProject.id);
 
-    // this.selectTask(newTask);
+    // this.selectMenuTask(newTask);
     this.buildTaskForm(newTask, ScreenController.FORM_CREATE_MODE);
   }
 
@@ -741,6 +749,7 @@ class ScreenController {
 
   updateSelectedProject(event, project, values) {
     event.preventDefault();
+    this.selectedProject = project;
 
     this.todoApp.updateProject(project, values);
     this.displaySideBarSection();

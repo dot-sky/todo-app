@@ -9,12 +9,21 @@ export function TodoApp(doc) {
   let tasks = [];
   let projects = [];
   let DEFAULT_PROJECT_ID = 0;
-  const taskMenu = { title: "Tasks", items: ["All", "Today", "Next 7 days"] };
-  const projectMenu = { title: "Projects" };
+  const taskMenu = {
+    title: "Tasks",
+    items: ["Add task", "All", "Today", "Next 7 days"],
+    icons: [
+      "fi fi-sr-square-plus",
+      "fi fi-rr-folder",
+      "fi fi-rr-challenge",
+      "fi fi-rr-calendar",
+    ],
+  };
+  const projectMenu = { title: "Projects", icons: ["fi fi-rr-folder"] };
   const storage = new Storage();
 
   const init = () => {
-    // storage.clear();
+    // storage.clear( );
     if (storage.length === 0) {
       loadDefaultData();
     } else {
@@ -153,7 +162,6 @@ export function TodoApp(doc) {
       const taskIdsToRemove = tasks.filter(
         (task) => task.projectId === projectId
       );
-      console.log(taskIdsToRemove);
       taskIdsToRemove.forEach((task) => storage.removeTask(task.taskId));
       tasks = filteredTasks;
     }
