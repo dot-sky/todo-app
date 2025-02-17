@@ -1,4 +1,13 @@
-import { format, parseISO } from "date-fns";
+import {
+  differenceInCalendarDays,
+  isSameDay,
+  format,
+  parseISO,
+  isTomorrow,
+  isYesterday,
+  getYear,
+  isPast,
+} from "date-fns";
 export class Task {
   static #id = 0;
   static priority = ["None", "Low", "Medium", "High"];
@@ -26,9 +35,13 @@ export class Task {
     Task.#assignTaskId(this);
   }
 
-  static #assignTaskId(task) {
-    task.#taskId = Task.#id;
-    Task.#id++;
+  updateTask(values) {
+    this.status = values.status || 0;
+    this.title = values.title || "Task";
+    this.desc = values.desc;
+    this.dueDate = values.dueDate;
+    this.priority = values.priority;
+    this.assignToProject(values.projectId);
   }
 
   assignToProject(projectId) {
@@ -47,15 +60,39 @@ export class Task {
     this.priority = priority;
   }
 
-  updateTask(values) {
-    this.status = values.status || 0;
-    this.title = values.title || "Task";
-    this.desc = values.desc;
-    this.dueDate = values.dueDate;
-    this.priority = values.priority;
-    this.assignToProject(values.projectId);
+  getFormattedDate() {
+    const today = new Date(Date.now()).toISOString();
+    const dueDate = parseISO(this.dueDate);
+    const difference = differenceInCalendarDays(dueDate, today);
+
+    let formattedDate = "";
+    if (isSameDay(dueDate, today)) {
+      formattedDate = "Today";
+    } else if (isYesterday(dueDate)) {
+      formattedDate = "Yesterday";
+    } else if (isTomorrow(dueDate)) {
+      formattedDate = "Tomorrow";
+    } else if (difference > 1 && difference < 7) {
+      formattedDate = format(dueDate, "eee");
+    } else if (getYear(today) === getYear(dueDate)) {
+      formattedDate = format(dueDate, "MMM d");
+    } else {
+      formattedDate = format(dueDate, "MMM d, yyyy");
+    }
+
+    return formattedDate;
   }
 
+  isOverdue() {
+    const today = new Date(Date.now()).toISOString();
+    const difference = differenceInCalendarDays(parseISO(this.dueDate), today);
+    return difference < 0;
+  }
+
+  static #assignTaskId(task) {
+    task.#taskId = Task.#id;
+    Task.#id++;
+  }
   // settters
   set dueDate(date) {
     const isoDate = parseISO(date || new Date(Date.now()).toISOString());

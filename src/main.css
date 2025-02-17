@@ -360,6 +360,10 @@ li.selected-menu-element:hover {
   color: var(--primary-600);
 }
 
+.date-overdue {
+  color: var(--danger);
+}
+
 .main-item-desc .priority-icon {
   font-size: var(--icon-size-sm);
   margin: 0px var(--space-1x);

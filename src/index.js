@@ -92,7 +92,9 @@ class ScreenController {
     date.textContent = task.dueDate;
     title.textContent = task.title;
     desc.textContent = task.desc;
-
+    if (task.isOverdue()) {
+      this.elementAddClass(date, "date-overdue");
+    }
     this.elementAddClass(header, "task-header");
     this.elementAddClass(controls, "task-controls");
     this.elementAddClass(checkDate, "task-check-date");
@@ -208,11 +210,15 @@ class ScreenController {
       );
 
       taskTitle.textContent = task.title;
-      date.textContent = task.dueDate;
+      date.textContent = task.getFormattedDate();
+      console.log(task.getFormattedDate(), task.isOverdue());
 
       itemContainer.classList.add("main-item");
       desc.classList.add("main-item-desc");
       dateContainer.classList.add("main-item-date");
+      if (task.isOverdue()) {
+        dateContainer.classList.add("date-overdue");
+      }
       checkBoxLink.classList.add("check-box-link");
       this.assignStatusIconClasses(task, checkBoxIcon);
       this.assignTitleStatusClasses(task, taskTitle, date);
