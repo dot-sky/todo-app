@@ -30,7 +30,7 @@ class ScreenController {
   updateWindow() {
     this.displaySideBarSection();
     this.selectProject(this.todoApp.getProject(0));
-    this.selectTask(this.todoApp.getProjectTasks(0)[1]);
+    // this.selectTask(this.todoApp.getProjectTasks(0)[1]);
   }
 
   // Tasks
@@ -56,7 +56,7 @@ class ScreenController {
     if (this.selectedTask) {
       this.displayTaskDetails(this.selectedTask);
     } else {
-      this.displayMessage(this.taskSection, "Select a task ... ");
+      this.displayMessage(this.taskSection, "task");
     }
   }
 
@@ -149,7 +149,7 @@ class ScreenController {
     if (this.selectedProject) {
       this.displayMainSection(this.selectedProject);
     } else {
-      this.displayMessage(this.mainSection, "Select a project ... ");
+      this.displayMessage(this.mainSection, "project");
     }
   }
 
@@ -570,11 +570,25 @@ class ScreenController {
   }
 
   // General
-  displayMessage(section, message) {
+  displayMessage(section, type) {
     section.textContent = "";
+    const message = `Select a ${type}...`;
+    const container = this.doc.createElement("div");
+    const icon = this.createElement("i", "", "fi icon");
     const msg = this.doc.createElement("p");
+
     msg.textContent = message;
-    section.appendChild(msg);
+    if (type === "task") {
+      this.elementAddClass(icon, "fi-tr-journal-alt");
+    } else {
+      this.elementAddClass(icon, "fi-tr-folder-open");
+    }
+    this.elementAddClass(container, "empty-message");
+
+    container.appendChild(icon);
+    container.appendChild(msg);
+
+    section.appendChild(container);
   }
 
   // Task Events
