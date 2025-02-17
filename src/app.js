@@ -1,6 +1,7 @@
 import { Task } from "./task.js";
 import { Project } from "./project.js";
 import { Storage } from "./storage.js";
+import { parseISO, compareDesc } from "date-fns";
 
 export { Task, Project };
 
@@ -29,6 +30,8 @@ export function TodoApp(doc) {
     } else {
       loadStorageData();
     }
+    sortTasks();
+    sortProjects();
   };
 
   const getUser = () => user;
@@ -36,7 +39,7 @@ export function TodoApp(doc) {
   const getProjectMenu = () => projectMenu;
 
   // Create and store task
-  const createTodo = (
+  const createTask = (
     name,
     desc,
     dueDate,
@@ -55,10 +58,26 @@ export function TodoApp(doc) {
       checklist
     );
     tasks.push(task);
-    // console.log(" Saving... ", task.taskId, task.title);
+    sortTasks();
     storage.setTask(task);
-    storage.setNextTaskId();
     return task;
+  };
+
+  const updateTask = (task, values) => {
+    task.updateTask(values);
+    updateSorting(task, values);
+    storage.setTask(task);
+  };
+
+  const switchTaskStatus = (task) => {
+    task.switchStatus();
+    storage.setTask(task);
+  };
+
+  const updateSorting = (task, newValue) => {
+    if (parseISO(task.dueDate) !== parseISO(newValue.dueDate)) {
+      sortTasks();
+    }
   };
 
   const showTasks = () => {
@@ -68,10 +87,17 @@ export function TodoApp(doc) {
     }
   };
 
-  const getTaskByIndex = (index) => tasks[index];
-
-  const getProjectTasks = (projectId) =>
-    tasks.filter((task) => task.projectId === projectId);
+  const sortTasks = () => {
+    // sort desc by date and then by id
+    tasks.sort((a, b) => {
+      const compare = compareDesc(parseISO(a.dueDate), parseISO(b.dueDate));
+      if (compare !== 0) {
+        return compare;
+      }
+      return b.taskId - a.taskId;
+    });
+    console.log(tasks);
+  };
 
   const getTask = (id) => {
     const task = tasks.filter((task) => task.taskId === id)[0];
@@ -80,6 +106,8 @@ export function TodoApp(doc) {
     }
     return task;
   };
+
+  const getTaskByIndex = (index) => tasks[index];
 
   const addTaskToProject = (task, project) => {
     if (task && project) {
@@ -98,28 +126,52 @@ export function TodoApp(doc) {
       console.log(" ! Task id not found!");
     }
   };
-  const updateTask = (task, values) => {
-    task.updateTask(values);
-    storage.setTask(task);
-  };
-  const switchTaskStatus = (task) => {
-    task.switchStatus();
-    storage.setTask(task);
-  };
+
+  const getProjectTasks = (projectId) =>
+    tasks.filter((task) => task.projectId === projectId);
+
   // Projects
-  const getAllProjects = () => projects;
   const createProject = (name, desc) => {
     const project = new Project(name, desc);
     projects.push(project);
     storage.setProject(project);
-    storage.setNextProjectId();
     return project;
   };
+
   const updateProject = (project, values) => {
     project.update(values);
     storage.setProject(project);
   };
-  const getProjectByIndex = (index) => projects[index];
+
+  const getAllProjects = () => projects;
+
+  const showProjects = () => {
+    console.log("Showing projects:");
+    for (const project of projects) {
+      project.log();
+    }
+  };
+
+  const showProjectsDetail = () => {
+    console.log("----------------------------");
+    console.log("Showing projects w/ details:");
+    for (const project of projects) {
+      project.logFormatted();
+      showProjectTasks(project.id);
+    }
+  };
+
+  const showProjectTasks = (projectId) => {
+    for (const task of tasks) {
+      if (task.projectId === projectId) {
+        task.logSummary();
+      }
+    }
+  };
+
+  const sortProjects = () => {
+    projects.sort((a, b) => b.id - a.id);
+  };
 
   const getProject = (id) => {
     const project = projects.filter((project) => project.id === id)[0];
@@ -128,6 +180,8 @@ export function TodoApp(doc) {
     }
     return project || {};
   };
+
+  const getProjectByIndex = (index) => projects[index];
 
   const getDefaultProject = () => getProject(DEFAULT_PROJECT_ID);
 
@@ -167,32 +221,7 @@ export function TodoApp(doc) {
     }
   };
 
-  const showProjects = () => {
-    console.log("Showing projects:");
-    for (const project of projects) {
-      project.log();
-    }
-  };
-
-  const showProjectsDetail = () => {
-    console.log("----------------------------");
-    console.log("Showing projects w/ details:");
-    for (const project of projects) {
-      project.logFormatted();
-      showProjectTasks(project.id);
-    }
-  };
-
-  const showProjectTasks = (projectId) => {
-    for (const task of tasks) {
-      if (task.projectId === projectId) {
-        task.logSummary();
-      }
-    }
-  };
-
   // Storage
-
   const loadStorageData = () => {
     tasks = storage.retrieveTasks();
     projects = storage.retrieveProjects();
@@ -201,7 +230,7 @@ export function TodoApp(doc) {
   };
 
   const loadDefaultData = () => {
-    createTodo(
+    createTask(
       "Grocery Shopping",
       "Buy vegetables, fruits, milk, and other household essentials.",
       "2025-02-05",
@@ -210,7 +239,7 @@ export function TodoApp(doc) {
       0,
       []
     );
-    createTodo(
+    createTask(
       "Finish Project Report",
       "Complete and submit the quarterly project report for review.",
       "2025-02-06",
@@ -219,7 +248,7 @@ export function TodoApp(doc) {
       0,
       []
     );
-    createTodo(
+    createTask(
       "Doctor's Appointment",
       "Visit the doctor for a routine health check-up.",
       "2025-02-07",
@@ -228,7 +257,7 @@ export function TodoApp(doc) {
       1,
       []
     );
-    createTodo(
+    createTask(
       "Workout Session",
       "Attend the scheduled gym session for strength training.",
       "2025-02-08",
@@ -237,7 +266,7 @@ export function TodoApp(doc) {
       1,
       []
     );
-    createTodo(
+    createTask(
       "Prepare Presentation",
       "Create slides for the upcoming team meeting.",
       "2025-02-09",
@@ -246,7 +275,7 @@ export function TodoApp(doc) {
       1,
       []
     );
-    createTodo(
+    createTask(
       "Car Maintenance",
       "Take the car for an oil change and tire rotation.",
       "2025-02-10",
@@ -255,7 +284,7 @@ export function TodoApp(doc) {
       2,
       []
     );
-    createTodo(
+    createTask(
       "Pay Utility Bills",
       "Clear electricity, water, and internet bills before the deadline.",
       "2025-02-11",
@@ -264,7 +293,7 @@ export function TodoApp(doc) {
       2,
       []
     );
-    createTodo(
+    createTask(
       "Read a Book",
       "Finish reading the current novel and start a new one.",
       "2025-02-12",
@@ -273,7 +302,7 @@ export function TodoApp(doc) {
       3,
       []
     );
-    createTodo(
+    createTask(
       "Weekend Trip Planning",
       "Plan the itinerary and book accommodations for the weekend trip.",
       "2025-02-13",
@@ -292,7 +321,7 @@ export function TodoApp(doc) {
 
   return {
     init,
-    createTodo,
+    createTask,
     showTasks,
     getUser,
     getTaskByIndex,

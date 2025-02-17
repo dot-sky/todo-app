@@ -640,7 +640,7 @@ class ScreenController {
   }
 
   createTaskForm(event) {
-    const newTask = this.todoApp.createTodo();
+    const newTask = this.todoApp.createTask();
     newTask.assignToProject(this.selectedProject.id);
 
     // this.selectMenuTask(newTask);

@@ -1,5 +1,6 @@
 import { Task } from "./task.js";
 import { Project } from "./project.js";
+import { parseISO } from "date-fns";
 
 export class Storage {
   static #TASK_PREFIX = "T";
@@ -19,6 +20,7 @@ export class Storage {
 
   setTask(task) {
     this.storage.setItem(Storage.#TASK_PREFIX + task.taskId, task.stringify());
+    this.setNextTaskId();
   }
 
   setProject(project) {
@@ -26,6 +28,7 @@ export class Storage {
       Storage.#PROJECT_PREFIX + project.id,
       project.stringify()
     );
+    this.setNextProjectId();
   }
 
   removeTask(id) {
@@ -41,7 +44,6 @@ export class Storage {
     for (const [key, item] of Object.entries(this.storage)) {
       if (this.#itemIsTask(key)) {
         const storedValues = JSON.parse(item);
-        console.log("retrieving", storedValues);
         const task = new Task();
         task.restoreObject(storedValues);
         tasks.push(task);
@@ -55,10 +57,8 @@ export class Storage {
     for (const [key, item] of Object.entries(this.storage)) {
       if (this.#itemIsProject(key)) {
         const storedValues = JSON.parse(item);
-        console.log(storedValues);
         const project = new Project();
         project.restoreObject(storedValues);
-        console.log(project);
         projects.push(project);
       }
     }
