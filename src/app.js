@@ -268,7 +268,7 @@ export function TodoApp(doc) {
     createTask(
       "Grocery Shopping",
       "Buy vegetables, fruits, milk, and other household essentials.",
-      "2025-02-05",
+      "",
       1,
       0,
       0,
@@ -277,7 +277,7 @@ export function TodoApp(doc) {
     createTask(
       "Finish Project Report",
       "Complete and submit the quarterly project report for review.",
-      "2025-02-06",
+      "2025-04-06",
       2,
       1,
       0,
@@ -286,7 +286,7 @@ export function TodoApp(doc) {
     createTask(
       "Doctor's Appointment",
       "Visit the doctor for a routine health check-up.",
-      "2025-02-07",
+      "",
       1,
       0,
       1,
@@ -295,7 +295,7 @@ export function TodoApp(doc) {
     createTask(
       "Workout Session",
       "Attend the scheduled gym session for strength training.",
-      "2025-02-08",
+      "",
       0,
       2,
       1,
@@ -304,7 +304,7 @@ export function TodoApp(doc) {
     createTask(
       "Prepare Presentation",
       "Create slides for the upcoming team meeting.",
-      "2025-02-09",
+      "",
       2,
       1,
       1,
@@ -313,7 +313,7 @@ export function TodoApp(doc) {
     createTask(
       "Car Maintenance",
       "Take the car for an oil change and tire rotation.",
-      "2025-02-10",
+      "",
       1,
       0,
       2,
@@ -340,7 +340,7 @@ export function TodoApp(doc) {
     createTask(
       "Weekend Trip Planning",
       "Plan the itinerary and book accommodations for the weekend trip.",
-      "2025-02-13",
+      "2025-06-13",
       3,
       0,
       3,

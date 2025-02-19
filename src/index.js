@@ -29,8 +29,8 @@ class ScreenController {
 
   updateWindow() {
     this.displaySideBarSection();
-    this.selectProject(this.todoApp.getList(1));
-    this.selectTask(this.todoApp.getProjectTasks(0)[1]);
+    this.selectProject(this.todoApp.getDefaultProject());
+    this.selectTask();
   }
 
   // Tasks
