@@ -1,6 +1,6 @@
 import "./main.css";
 import { TodoApp, Project, Task } from "./app.js";
-import { add } from "date-fns";
+import appIcon from "./assets/app-icon.png";
 
 class ScreenController {
   static FORM_EDIT_MODE = 0;
@@ -269,9 +269,18 @@ class ScreenController {
   // Sidebar
   displaySideBarSection() {
     const appSection = this.doc.createElement("div");
-    const userSection = this.doc.createElement("div");
-    userSection.textContent = this.todoApp.getUser();
+    const icon = this.doc.createElement("img");
+    const appName = this.doc.createElement("h1");
 
+    const userSection = this.doc.createElement("div");
+
+    appName.textContent = "SimplyDone";
+    userSection.textContent = this.todoApp.getUser();
+    icon.setAttribute("src", appIcon);
+    this.elementAddClass(appSection, "app-name-wrapper");
+    this.elementAddClass(appName, "h5");
+    appSection.appendChild(icon);
+    appSection.appendChild(appName);
     // Tasks
     const tasksMenu = this.doc.createElement("div");
     const taskMenu = this.todoApp.getTaskMenu();

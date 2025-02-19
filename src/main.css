@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Quicksand:wght@300..700&display=swap");
 @import "~@flaticon/flaticon-uicons/css/all/all";
 /* root variables: color palette, spaces */
 :root {
@@ -11,7 +11,7 @@
   --primary: #5ab2ff;
   --secondary: #fff9d0;
   --accent: #a0deff;
-  --danger: #df6873;
+  --danger: #df6873; /*#df6873*/
   --warning: #f0e56a; /*f0e56a  ebdb2b*/
   --success: #6cc66f;
 
@@ -166,7 +166,8 @@ h4,
   font-size: 1.777rem; /* 28.48px */
 }
 
-h5 {
+h5,
+.h5 {
   font-size: 1.333rem; /* 21.28px */
 }
 
@@ -263,6 +264,33 @@ a {
 }
 
 /* Side Bar */
+.app-name-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1x);
+  padding: var(--space-1x);
+  margin-bottom: var(--space-2x);
+}
+.app-name-wrapper > img {
+  height: 40px;
+  object-fit: cover;
+}
+.app-name-wrapper > h1 {
+  font-family: "Quicksand";
+  color: var(--danger);
+  background-image: linear-gradient(
+    45deg,
+    var(--accent-300),
+    var(--accent-700)
+  );
+  background-clip: text;
+  text-fill-color: transparent;
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -moz-text-fill-color: transparent;
+}
+
 .menu-segment-heading {
   display: flex;
   align-items: center;
