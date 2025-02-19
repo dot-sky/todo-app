@@ -28,7 +28,6 @@ export function TodoApp(doc) {
     // storage.clear();
     if (storage.length === 0) {
       createDefaultLists();
-      loadListData();
       loadDefaultData();
     } else {
       loadStorageData();
