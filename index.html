@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TODO App</title>
+    <title>SimplyDone</title>
+    <link rel="icon" type="image/x-icon" href="3cd14cc61ac07b583dd2.ico">
 <script defer src="main.js"></script></head>
 
 <body>
@@ -12,46 +13,10 @@
         <div class="col side-bar-section"></div>
         <div class="col main-section"></div>
         <div class="col task-section"></div>
-
     </div>
-    <dialog id="dialog-form">
-        <form method="dialog">
-            <div class="dialog-header">
-                <h5>Todo Editor</h5>
-                <div class="button-group">
-                    <button type="submit" id="noval-close" value="" formnovalidate><i
-                            class="fi fi-rr-trash icon"></i></button>
-                    <button type="submit" id="cancel" value="" formnovalidate><i
-                            class="fi fi-rr-cross icon icon-cross"></i></button>
-                    <button type="submit" id="confirm" value="Add book"><i class="fi fi-rr-check icon"></i></button>
-                </div>
-            </div>
-            <div class="input-status-date">
-                <div><i class="fi fi-rr-square clickable-icon check-box"></i></div>
-                <div>
-                    <label for="dueDate" hidden>Due date</label>
-                    <input id="date" name="date" type="date">
-                </div>
-            </div>
-            <div class="input-group">
-                <div class="input-group-left">
-                    <input id="title" name="title" type="text" value="" class="h4" placeholder="Todo title">
-                </div>
-                <div class="input-group-right">
-                    <label for="priority"><i class='fi fi-rr-flag-alt icon priority-icon'></i></label>
-                    <select name="priority" id="priority">
-                        <option value="0">None</option>
-                        <option value="1">Low</option>
-                        <option value="2">Medium</option>
-                        <option value="3">High</option>
-                    </select>
-                </div>
-            </div>
-            <div class="desc-area">
-                <textarea id="desc" name="desc" placeholder="Write the description of your task here..." rows="15"
-                    cols="32" value=""></textarea>
-            </div>
-        </form>
+    <dialog id="task-form">
+    </dialog>
+    <dialog id="project-form">
     </dialog>
 </body>
 
