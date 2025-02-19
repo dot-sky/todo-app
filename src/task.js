@@ -6,7 +6,6 @@ import {
   isTomorrow,
   isYesterday,
   getYear,
-  isPast,
 } from "date-fns";
 export class Task {
   static #id = 0;
@@ -87,6 +86,12 @@ export class Task {
     const today = new Date(Date.now()).toISOString();
     const difference = differenceInCalendarDays(parseISO(this.dueDate), today);
     return difference < 0;
+  }
+
+  isDueKDays() {
+    const today = new Date(Date.now()).toISOString();
+    const difference = differenceInCalendarDays(parseISO(this.dueDate), today);
+    return difference >= 0 && difference <= 7;
   }
 
   static #assignTaskId(task) {

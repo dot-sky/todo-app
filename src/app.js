@@ -1,7 +1,7 @@
 import { Task } from "./task.js";
 import { Project } from "./project.js";
 import { Storage } from "./storage.js";
-import { parseISO, compareDesc } from "date-fns";
+import { parseISO, compareDesc, isToday } from "date-fns";
 
 export { Task, Project };
 
@@ -9,6 +9,7 @@ export function TodoApp(doc) {
   let user;
   let tasks = [];
   let projects = [];
+  let lists = [];
   let DEFAULT_PROJECT_ID = 0;
   const taskMenu = {
     title: "Tasks",
@@ -24,14 +25,17 @@ export function TodoApp(doc) {
   const storage = new Storage();
 
   const init = () => {
-    // storage.clear( );
+    // storage.clear();
     if (storage.length === 0) {
+      createDefaultLists();
+      loadListData();
       loadDefaultData();
     } else {
       loadStorageData();
     }
     sortTasks();
     sortProjects();
+    sortLists();
   };
 
   const getUser = () => user;
@@ -96,13 +100,12 @@ export function TodoApp(doc) {
       }
       return b.taskId - a.taskId;
     });
-    console.log(tasks);
   };
 
   const getTask = (id) => {
     const task = tasks.filter((task) => task.taskId === id)[0];
     if (!task) {
-      console.log("Task id not found");
+      return null;
     }
     return task;
   };
@@ -112,8 +115,6 @@ export function TodoApp(doc) {
   const addTaskToProject = (task, project) => {
     if (task && project) {
       task.assignToProject(project.id);
-    } else {
-      console.log("Task or project is null");
     }
   };
 
@@ -122,14 +123,16 @@ export function TodoApp(doc) {
     if (index >= 0) {
       tasks.splice(index, 1);
       storage.removeTask(taskId);
-    } else {
-      console.log(" ! Task id not found!");
     }
   };
 
   const getProjectTasks = (projectId) =>
     tasks.filter((task) => task.projectId === projectId);
 
+  const getTodayTasks = () =>
+    tasks.filter((task) => isToday(parseISO(task.dueDate)));
+
+  const getTasksDueKDays = (k) => tasks.filter((task) => task.isDueKDays(k));
   // Projects
   const createProject = (name, desc) => {
     const project = new Project(name, desc);
@@ -142,6 +145,7 @@ export function TodoApp(doc) {
     project.update(values);
     storage.setProject(project);
   };
+  const isProject = (value) => value instanceof Project;
 
   const getAllProjects = () => projects;
 
@@ -170,15 +174,12 @@ export function TodoApp(doc) {
   };
 
   const sortProjects = () => {
-    projects.sort((a, b) => b.id - a.id);
+    projects.sort((a, b) => a.id - b.id);
   };
 
   const getProject = (id) => {
     const project = projects.filter((project) => project.id === id)[0];
-    if (!project) {
-      console.log("no project id found");
-    }
-    return project || {};
+    return project || null;
   };
 
   const getProjectByIndex = (index) => projects[index];
@@ -192,7 +193,6 @@ export function TodoApp(doc) {
       storage.removeProject(projectId);
       return true;
     } else {
-      console.log(" ! Project id not found!");
       return false;
     }
   };
@@ -221,10 +221,46 @@ export function TodoApp(doc) {
     }
   };
 
+  const getList = (index) => {
+    if (index >= 0 && index < lists.length) {
+      return lists[index];
+    }
+    return null;
+  };
+  const getListTasks = (listId) => {
+    let listTasks = [];
+
+    if (listId === "L-0") {
+      listTasks = tasks;
+    } else if (listId === "L-1") {
+      listTasks = getTodayTasks();
+    } else if (listId === "L-2") {
+      listTasks = getTasksDueKDays(7);
+    }
+    return listTasks;
+  };
+
+  const createList = (id, name, desc) => {
+    const list = { id, name, desc };
+    lists.push(list);
+    storage.setList(list);
+  };
+
+  const createDefaultLists = () => {
+    createList("L-0", "All", "All your tasks in one place");
+    createList("L-1", "Today", "Make the most of this day");
+    createList("L-2", "Next 7 days", "A look into your week");
+  };
+
+  const sortLists = () => {
+    lists.sort((a, b) => a.id.substr(2) - b.id.substr(2));
+  };
+
   // Storage
   const loadStorageData = () => {
     tasks = storage.retrieveTasks();
     projects = storage.retrieveProjects();
+    lists = storage.retrieveLists();
     Task.setNextId(storage.getNextTaskId());
     Project.setNextId(storage.getNextProjectId());
   };
@@ -311,10 +347,12 @@ export function TodoApp(doc) {
       3,
       []
     );
+
     createProject("Personal", "Add your personal projects here.");
     createProject("Work", "All things related to work");
     createProject("University", "For my classses");
     createProject("Fun", "Anything related to fun activities!");
+
     showTasks();
     showProjectsDetail();
   };
@@ -329,10 +367,12 @@ export function TodoApp(doc) {
     getTaskMenu,
     getProjectMenu,
     getProjectTasks,
+    getTodayTasks,
     deleteTask,
     updateTask,
     switchTaskStatus,
     getProject,
+    isProject,
     getDefaultProject,
     getAllProjects,
     deleteProject,
@@ -342,6 +382,8 @@ export function TodoApp(doc) {
     showProjects,
     showProjectsDetail,
     addTaskToProject,
+    getList,
+    getListTasks,
   };
 }
 

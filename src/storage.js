@@ -1,10 +1,10 @@
 import { Task } from "./task.js";
 import { Project } from "./project.js";
-import { parseISO } from "date-fns";
 
 export class Storage {
   static #TASK_PREFIX = "T";
   static #PROJECT_PREFIX = "P";
+  static #LIST_PREFIX = "L";
 
   constructor() {
     this.storage = localStorage;
@@ -29,6 +29,10 @@ export class Storage {
       project.stringify()
     );
     this.setNextProjectId();
+  }
+
+  setList(list) {
+    this.storage.setItem(list.id, JSON.stringify(list));
   }
 
   removeTask(id) {
@@ -65,6 +69,15 @@ export class Storage {
     return projects;
   }
 
+  retrieveLists() {
+    const lists = [];
+    for (const [key, item] of Object.entries(this.storage)) {
+      if (this.#itemIsList(key)) {
+        lists.push(JSON.parse(item));
+      }
+    }
+    return lists;
+  }
   setNextTaskId() {
     this.storage.setItem("ID-" + Storage.#TASK_PREFIX, Task.nextId());
   }
@@ -93,5 +106,9 @@ export class Storage {
 
   #itemIsProject(key) {
     return key[0] === Storage.#PROJECT_PREFIX;
+  }
+
+  #itemIsList(key) {
+    return key[0] === Storage.#LIST_PREFIX;
   }
 }

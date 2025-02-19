@@ -30,7 +30,7 @@ class ScreenController {
   updateWindow() {
     this.displaySideBarSection();
     this.selectProject(this.todoApp.getProject(0));
-    // this.selectTask(this.todoApp.getProjectTasks(0)[1]);
+    this.selectTask(this.todoApp.getProjectTasks(0)[1]);
   }
 
   // Tasks
@@ -184,12 +184,20 @@ class ScreenController {
     headerDesc.appendChild(descText);
     editLink.appendChild(editIcon);
     headerTitle.appendChild(title);
-    headerTitle.appendChild(editLink);
+    if (this.todoApp.isProject(list)) {
+      headerTitle.appendChild(editLink);
+    }
     header.appendChild(headerTitle);
     header.appendChild(headerDesc);
 
     // List
-    const tasks = this.todoApp.getProjectTasks(list.id);
+    let tasks;
+    if (this.todoApp.isProject(list)) {
+      tasks = this.todoApp.getProjectTasks(list.id);
+    } else {
+      tasks = this.todoApp.getListTasks(list.id);
+    }
+
     for (const task of tasks) {
       const itemContainer = this.doc.createElement("div");
       const desc = this.doc.createElement("div");
@@ -211,7 +219,6 @@ class ScreenController {
 
       taskTitle.textContent = task.title;
       date.textContent = task.getFormattedDate();
-      console.log(task.getFormattedDate(), task.isOverdue());
 
       itemContainer.classList.add("main-item");
       desc.classList.add("main-item-desc");
@@ -275,10 +282,16 @@ class ScreenController {
         this.elementAddClass(listItem, "menu-highlight");
         // create task event
         listItem.addEventListener("click", () => this.createTaskForm());
+      } else {
+        const list = this.todoApp.getList(i - 1);
+        listItem.addEventListener("click", () => this.selectProject(list));
+
+        if (this.selectedProject && list.id === this.selectedProject.id) {
+          this.elementAddClass(listItem, "selected-menu-element");
+        }
       }
       taskMenuList.appendChild(listItem);
     }
-
     taskMenuList.classList.add("menu-elements");
 
     tasksMenu.appendChild(taskMenuList);
@@ -624,7 +637,6 @@ class ScreenController {
 
   deleteSelectedTask(event, task) {
     event.preventDefault();
-    console.log("Deleting...");
     this.todoApp.deleteTask(task.taskId);
     this.renderProjectSection();
     this.selectTask(null);
