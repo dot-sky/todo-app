@@ -1,12 +1,18 @@
-# Todo App (Development 50%)
+# SimplyDone
 
-A simple, modern Todo App built with JavaScript, Webpack, and date-fns. This application allows users to manage their tasks efficiently with an intuitive UI.
+A minimalist web application built with HTML, CSS, JavaScript and local storage. This application allows users to manage their tasks with a simple interface.
 
 ## Features
 
-- Add, edit, and delete tasks
-- Organize tasks with due dates
-- Responsive and minimalist UI
+- Add, edit, and delete tasks.
+- Organize your tasks in projects.
+- See all of your tasks for the day or the week.
+- Data persistency, tasks and projects are stored on the browser.
+- Responsive and minimalist UI.
+
+## Try it now!
+
+Click here to start organizing your tasks: [https://dot-sky.github.io/todo-app/](https://dot-sky.github.io/todo-app/)
 
 ## Installation
 
